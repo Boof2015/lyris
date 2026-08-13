@@ -1,0 +1,2232 @@
+{
+  "schema": "dev.astramusic.lyris/project",
+  "version": 1,
+  "id": "project_c57f2e4d-820d-4dd1-956c-11aa025f449b",
+  "createdAt": "2026-08-12T21:01:32.929Z",
+  "updatedAt": "2026-08-12T21:32:51.778Z",
+  "revision": 9,
+  "audio": {
+    "path": "/Users/landerhartel/Music/9Lana - DOLL/4. 9Lana - BALALAIKA.flac",
+    "pathKind": "absolute",
+    "fileName": "4. 9Lana - BALALAIKA.flac",
+    "mimeType": "audio/flac",
+    "fingerprint": {
+      "algorithm": "sha256-windowed-v1",
+      "value": "8e2ba9805c2e36a2223a936ac21c7847d34c2fc77602bcfba023a64076b292e0",
+      "size": 44707655
+    },
+    "durationMs": 190033
+  },
+  "document": {
+    "id": "document_e1971491-6e42-4519-9c56-96feec6fcd34",
+    "metadata": {
+      "title": "BALALAIKA",
+      "artist": "9Lana",
+      "album": "DOLL",
+      "primaryLanguage": "ja",
+      "languages": [
+        "ja",
+        "en",
+        "ja-Latn"
+      ],
+      "durationMs": 190033,
+      "extra": {
+        "by": "test",
+        "xlrc": "0.1"
+      }
+    },
+    "lines": [
+      {
+        "id": "line_f44498c0-08a7-4025-abbe-d1e49efba742",
+        "kind": "lyric",
+        "sectionBreakBefore": true,
+        "text": "どうかしてしまいそうだ 溢れちゃってる君のスパイシー",
+        "startMs": 11640,
+        "endMs": null,
+        "voice": null,
+        "translations": [
+          {
+            "id": "translation_f93bded2-236b-4266-b31f-1a989cce2e10",
+            "language": "en",
+            "text": "I'm about to lose my mind — you're overflowing with spice",
+            "provenance": {
+              "kind": "import",
+              "createdAt": "2026-08-12T21:02:18.770Z"
+            }
+          },
+          {
+            "id": "translation_158f8fc8-6156-44fe-b419-662c7234a878",
+            "language": "ja-Latn",
+            "text": "douka shite shimaisou da afurechatteru kimi no supaishii",
+            "provenance": {
+              "kind": "import",
+              "createdAt": "2026-08-12T21:02:18.770Z"
+            }
+          }
+        ],
+        "furigana": [
+          {
+            "start": 12,
+            "end": 13,
+            "base": "溢",
+            "reading": "あふ"
+          },
+          {
+            "start": 19,
+            "end": 20,
+            "base": "君",
+            "reading": "きみ"
+          }
+        ],
+        "words": [],
+        "reviewState": "unreviewed",
+        "provenance": {
+          "kind": "import",
+          "createdAt": "2026-08-12T21:02:18.770Z"
+        }
+      },
+      {
+        "id": "line_adea85e8-5736-4a27-b910-a301ba12842b",
+        "kind": "lyric",
+        "sectionBreakBefore": true,
+        "text": "Focus 目で追ってしまう 今宵 胸騒ぎなレイトショー",
+        "startMs": 15970,
+        "endMs": null,
+        "voice": null,
+        "translations": [
+          {
+            "id": "translation_7cb159b6-390b-49b1-837d-e56c99a672bb",
+            "language": "en",
+            "text": "Focus — my eyes just follow you, tonight's a thrilling late show",
+            "provenance": {
+              "kind": "import",
+              "createdAt": "2026-08-12T21:02:18.770Z"
+            }
+          },
+          {
+            "id": "translation_fc73535a-f968-4bcf-9194-f47328328998",
+            "language": "ja-Latn",
+            "text": "Focus me de otte shimau koyoi munasawagi na reito shoo",
+            "provenance": {
+              "kind": "import",
+              "createdAt": "2026-08-12T21:02:18.770Z"
+            }
+          }
+        ],
+        "furigana": [
+          {
+            "start": 6,
+            "end": 7,
+            "base": "目",
+            "reading": "め"
+          },
+          {
+            "start": 8,
+            "end": 9,
+            "base": "追",
+            "reading": "お"
+          },
+          {
+            "start": 15,
+            "end": 17,
+            "base": "今宵",
+            "reading": "こよい"
+          },
+          {
+            "start": 18,
+            "end": 20,
+            "base": "胸騒",
+            "reading": "むねさわ"
+          }
+        ],
+        "words": [],
+        "reviewState": "unreviewed",
+        "provenance": {
+          "kind": "import",
+          "createdAt": "2026-08-12T21:02:18.770Z"
+        }
+      },
+      {
+        "id": "line_45098d45-3397-45b1-8146-58866179a887",
+        "kind": "lyric",
+        "sectionBreakBefore": true,
+        "text": "カラっとグラス揺らしステアする手で誘う Fallin' Fallin'",
+        "startMs": 20970,
+        "endMs": null,
+        "voice": null,
+        "translations": [
+          {
+            "id": "translation_927fb7be-cec2-4dd5-a0e9-fa55dbd3922a",
+            "language": "en",
+            "text": "Swirling an empty glass, your stirring hand beckons — Fallin' Fallin'",
+            "provenance": {
+              "kind": "import",
+              "createdAt": "2026-08-12T21:02:18.770Z"
+            }
+          },
+          {
+            "id": "translation_b73ac595-6b67-4087-943e-0b67e3636ebe",
+            "language": "ja-Latn",
+            "text": "kara tto gurasu yurashi sutea suru te de sasou Fallin' Fallin'",
+            "provenance": {
+              "kind": "import",
+              "createdAt": "2026-08-12T21:02:18.770Z"
+            }
+          }
+        ],
+        "furigana": [
+          {
+            "start": 7,
+            "end": 8,
+            "base": "揺",
+            "reading": "ゆ"
+          },
+          {
+            "start": 15,
+            "end": 16,
+            "base": "手",
+            "reading": "て"
+          },
+          {
+            "start": 17,
+            "end": 18,
+            "base": "誘",
+            "reading": "さそ"
+          }
+        ],
+        "words": [],
+        "reviewState": "unreviewed",
+        "provenance": {
+          "kind": "import",
+          "createdAt": "2026-08-12T21:02:18.770Z"
+        }
+      },
+      {
+        "id": "line_63f6511d-a9f3-4309-a5c9-1ef812faef74",
+        "kind": "lyric",
+        "sectionBreakBefore": true,
+        "text": "吠えず闇に潜むケモノ 耳澄まして Listen",
+        "startMs": 26060,
+        "endMs": null,
+        "voice": null,
+        "translations": [
+          {
+            "id": "translation_32eab715-5574-47d6-a72f-826886f964bd",
+            "language": "en",
+            "text": "A beast lurking silent in the dark — listen close",
+            "provenance": {
+              "kind": "import",
+              "createdAt": "2026-08-12T21:02:18.770Z"
+            }
+          },
+          {
+            "id": "translation_213ddfbd-d1c6-428d-bdab-fbfbf9f93b8c",
+            "language": "ja-Latn",
+            "text": "hoezu yami ni hisomu kemono mimi sumashite Listen",
+            "provenance": {
+              "kind": "import",
+              "createdAt": "2026-08-12T21:02:18.770Z"
+            }
+          }
+        ],
+        "furigana": [
+          {
+            "start": 0,
+            "end": 1,
+            "base": "吠",
+            "reading": "ほ"
+          },
+          {
+            "start": 3,
+            "end": 4,
+            "base": "闇",
+            "reading": "やみ"
+          },
+          {
+            "start": 5,
+            "end": 6,
+            "base": "潜",
+            "reading": "ひそ"
+          },
+          {
+            "start": 11,
+            "end": 12,
+            "base": "耳",
+            "reading": "みみ"
+          },
+          {
+            "start": 12,
+            "end": 13,
+            "base": "澄",
+            "reading": "す"
+          }
+        ],
+        "words": [],
+        "reviewState": "unreviewed",
+        "provenance": {
+          "kind": "import",
+          "createdAt": "2026-08-12T21:02:18.770Z"
+        }
+      },
+      {
+        "id": "line_71f961c7-e2c2-42e3-986b-b0397f94e43f",
+        "kind": "lyric",
+        "sectionBreakBefore": true,
+        "text": "戻れないとわかってても崩れてゆく Reason",
+        "startMs": 28130,
+        "endMs": null,
+        "voice": null,
+        "translations": [
+          {
+            "id": "translation_c1a3e696-4aca-4d0b-921e-72880c15d5e5",
+            "language": "en",
+            "text": "Even knowing I can't go back, my reason crumbles away",
+            "provenance": {
+              "kind": "import",
+              "createdAt": "2026-08-12T21:02:18.770Z"
+            }
+          },
+          {
+            "id": "translation_fa6eb7df-0567-4948-af9e-a7e5a24ecce8",
+            "language": "ja-Latn",
+            "text": "modorenai to wakattete mo kuzurete yuku Reason",
+            "provenance": {
+              "kind": "import",
+              "createdAt": "2026-08-12T21:02:18.770Z"
+            }
+          }
+        ],
+        "furigana": [
+          {
+            "start": 0,
+            "end": 1,
+            "base": "戻",
+            "reading": "もど"
+          },
+          {
+            "start": 11,
+            "end": 12,
+            "base": "崩",
+            "reading": "くず"
+          }
+        ],
+        "words": [],
+        "reviewState": "unreviewed",
+        "provenance": {
+          "kind": "import",
+          "createdAt": "2026-08-12T21:02:18.770Z"
+        }
+      },
+      {
+        "id": "line_27a7a514-6441-44c2-97f7-08a3c0306957",
+        "kind": "lyric",
+        "sectionBreakBefore": true,
+        "text": "コイセヨ アイセヨ コガレロ お手を拝借",
+        "startMs": 30560,
+        "endMs": null,
+        "voice": null,
+        "translations": [
+          {
+            "id": "translation_42c5d94f-0c18-46b9-8164-96c7d9ce6e5f",
+            "language": "en",
+            "text": "Fall in love, embrace love, yearn — now lend me your hand",
+            "provenance": {
+              "kind": "import",
+              "createdAt": "2026-08-12T21:02:18.771Z"
+            }
+          },
+          {
+            "id": "translation_cf4e8b71-322c-41b0-b7d5-5b3e7664b7e6",
+            "language": "ja-Latn",
+            "text": "koiseyo aiseyo kogarero o-te wo haishaku",
+            "provenance": {
+              "kind": "import",
+              "createdAt": "2026-08-12T21:02:18.771Z"
+            }
+          }
+        ],
+        "furigana": [
+          {
+            "start": 16,
+            "end": 17,
+            "base": "手",
+            "reading": "て"
+          },
+          {
+            "start": 18,
+            "end": 20,
+            "base": "拝借",
+            "reading": "はいしゃく"
+          }
+        ],
+        "words": [],
+        "reviewState": "unreviewed",
+        "provenance": {
+          "kind": "import",
+          "createdAt": "2026-08-12T21:02:18.771Z"
+        }
+      },
+      {
+        "id": "line_eb153591-bea7-4f6e-8601-6dea85bddf35",
+        "kind": "lyric",
+        "sectionBreakBefore": true,
+        "text": "ユラリ揺れる燃ゆる Flame 焦りは禁物さ Balalaika",
+        "startMs": 40350,
+        "endMs": null,
+        "voice": null,
+        "translations": [
+          {
+            "id": "translation_11826211-1aa0-4633-b60f-72756a9d9552",
+            "language": "en",
+            "text": "The flame sways and burns — no rushing now, Balalaika",
+            "provenance": {
+              "kind": "import",
+              "createdAt": "2026-08-12T21:02:18.771Z"
+            }
+          },
+          {
+            "id": "translation_e69c8343-bb2c-48cd-94bc-881618586684",
+            "language": "ja-Latn",
+            "text": "yurari yureru moyuru Flame aseri wa kinmotsu sa Balalaika",
+            "provenance": {
+              "kind": "import",
+              "createdAt": "2026-08-12T21:02:18.771Z"
+            }
+          }
+        ],
+        "furigana": [
+          {
+            "start": 3,
+            "end": 4,
+            "base": "揺",
+            "reading": "ゆ"
+          },
+          {
+            "start": 6,
+            "end": 7,
+            "base": "燃",
+            "reading": "も"
+          },
+          {
+            "start": 16,
+            "end": 17,
+            "base": "焦",
+            "reading": "あせ"
+          },
+          {
+            "start": 19,
+            "end": 21,
+            "base": "禁物",
+            "reading": "きんもつ"
+          }
+        ],
+        "words": [],
+        "reviewState": "unreviewed",
+        "provenance": {
+          "kind": "import",
+          "createdAt": "2026-08-12T21:02:18.771Z"
+        }
+      },
+      {
+        "id": "line_420797a2-6b8f-4e50-bb28-cc148d4670ba",
+        "kind": "lyric",
+        "sectionBreakBefore": true,
+        "text": "恐れないで Gatta Get Your Groove On!",
+        "startMs": 45000,
+        "endMs": null,
+        "voice": null,
+        "translations": [
+          {
+            "id": "translation_e4fb2839-cf99-4b05-94f5-b516d2f4ded7",
+            "language": "en",
+            "text": "Don't be afraid — gotta get your groove on!",
+            "provenance": {
+              "kind": "import",
+              "createdAt": "2026-08-12T21:02:18.771Z"
+            }
+          },
+          {
+            "id": "translation_f61b1429-d3a8-4c3f-a7b7-c4e90af694d0",
+            "language": "ja-Latn",
+            "text": "osorenaide Gatta Get Your Groove On!",
+            "provenance": {
+              "kind": "import",
+              "createdAt": "2026-08-12T21:02:18.771Z"
+            }
+          }
+        ],
+        "furigana": [
+          {
+            "start": 0,
+            "end": 1,
+            "base": "恐",
+            "reading": "おそ"
+          }
+        ],
+        "words": [],
+        "reviewState": "unreviewed",
+        "provenance": {
+          "kind": "import",
+          "createdAt": "2026-08-12T21:02:18.771Z"
+        }
+      },
+      {
+        "id": "line_cf804e13-fdb8-4138-a98d-f2608af36e54",
+        "kind": "lyric",
+        "sectionBreakBefore": true,
+        "text": "DARA-DA-DA-RA-DA RA-DA-DA-RA",
+        "startMs": 46970,
+        "endMs": null,
+        "voice": null,
+        "translations": [],
+        "furigana": [],
+        "words": [],
+        "reviewState": "unreviewed",
+        "provenance": {
+          "kind": "import",
+          "createdAt": "2026-08-12T21:02:18.771Z"
+        }
+      },
+      {
+        "id": "line_7fefa738-bd6d-4490-93b7-ec0dad750244",
+        "kind": "lyric",
+        "sectionBreakBefore": true,
+        "text": "誰が何言おうが No Way! 心変わりするはずがないんだ",
+        "startMs": 49380,
+        "endMs": null,
+        "voice": null,
+        "translations": [
+          {
+            "id": "translation_3fdf52c4-86ba-428c-a0e1-ef898c3cc3ae",
+            "language": "en",
+            "text": "No matter what anyone says — no way, there's no chance my heart will change",
+            "provenance": {
+              "kind": "import",
+              "createdAt": "2026-08-12T21:02:18.771Z"
+            }
+          },
+          {
+            "id": "translation_2eef3240-ab66-4543-b22c-bc0550345760",
+            "language": "ja-Latn",
+            "text": "dare ga nani iou ga No Way! kokorogawari suru hazu ga nai n da",
+            "provenance": {
+              "kind": "import",
+              "createdAt": "2026-08-12T21:02:18.771Z"
+            }
+          }
+        ],
+        "furigana": [
+          {
+            "start": 0,
+            "end": 1,
+            "base": "誰",
+            "reading": "だれ"
+          },
+          {
+            "start": 2,
+            "end": 3,
+            "base": "何",
+            "reading": "なに"
+          },
+          {
+            "start": 3,
+            "end": 4,
+            "base": "言",
+            "reading": "い"
+          },
+          {
+            "start": 16,
+            "end": 17,
+            "base": "心",
+            "reading": "こころ"
+          },
+          {
+            "start": 17,
+            "end": 18,
+            "base": "変",
+            "reading": "か"
+          }
+        ],
+        "words": [],
+        "reviewState": "unreviewed",
+        "provenance": {
+          "kind": "import",
+          "createdAt": "2026-08-12T21:02:18.771Z"
+        }
+      },
+      {
+        "id": "line_251e9f0c-0c92-4498-9923-0291c1c999c2",
+        "kind": "lyric",
+        "sectionBreakBefore": true,
+        "text": "君がいいの Can't stop my heart",
+        "startMs": 54320,
+        "endMs": null,
+        "voice": null,
+        "translations": [
+          {
+            "id": "translation_381c79f8-15dd-48a1-8fc6-c0569295a486",
+            "language": "en",
+            "text": "It's you I want — can't stop my heart",
+            "provenance": {
+              "kind": "import",
+              "createdAt": "2026-08-12T21:02:18.771Z"
+            }
+          },
+          {
+            "id": "translation_735d8486-8481-42aa-aa58-f16f5fe03ab9",
+            "language": "ja-Latn",
+            "text": "kimi ga ii no Can't stop my heart",
+            "provenance": {
+              "kind": "import",
+              "createdAt": "2026-08-12T21:02:18.771Z"
+            }
+          }
+        ],
+        "furigana": [
+          {
+            "start": 0,
+            "end": 1,
+            "base": "君",
+            "reading": "きみ"
+          }
+        ],
+        "words": [],
+        "reviewState": "unreviewed",
+        "provenance": {
+          "kind": "import",
+          "createdAt": "2026-08-12T21:02:18.771Z"
+        }
+      },
+      {
+        "id": "line_d0efb9ed-a37c-4599-bd9c-0f25401d1a88",
+        "kind": "lyric",
+        "sectionBreakBefore": true,
+        "text": "時を虎視眈々と窺うわ",
+        "startMs": 56790,
+        "endMs": null,
+        "voice": null,
+        "translations": [
+          {
+            "id": "translation_f3b8646c-e234-4ff5-be1f-a9c05462ef29",
+            "language": "en",
+            "text": "I watch and wait for my moment with patient eyes",
+            "provenance": {
+              "kind": "import",
+              "createdAt": "2026-08-12T21:02:18.771Z"
+            }
+          },
+          {
+            "id": "translation_982faf5e-a9b3-4c0d-811f-50d4be316692",
+            "language": "ja-Latn",
+            "text": "toki wo koshitantan to ukagau wa",
+            "provenance": {
+              "kind": "import",
+              "createdAt": "2026-08-12T21:02:18.771Z"
+            }
+          }
+        ],
+        "furigana": [
+          {
+            "start": 0,
+            "end": 1,
+            "base": "時",
+            "reading": "とき"
+          },
+          {
+            "start": 2,
+            "end": 6,
+            "base": "虎視眈々",
+            "reading": "こしたんたん"
+          },
+          {
+            "start": 7,
+            "end": 8,
+            "base": "窺",
+            "reading": "うかが"
+          }
+        ],
+        "words": [],
+        "reviewState": "unreviewed",
+        "provenance": {
+          "kind": "import",
+          "createdAt": "2026-08-12T21:02:18.771Z"
+        }
+      },
+      {
+        "id": "line_6dcfa80c-6137-4ca3-9c11-0dc372421009",
+        "kind": "instrumental",
+        "sectionBreakBefore": true,
+        "text": "",
+        "startMs": 59910,
+        "endMs": null,
+        "voice": null,
+        "translations": [],
+        "furigana": [],
+        "words": [],
+        "reviewState": "unreviewed",
+        "provenance": {
+          "kind": "import",
+          "createdAt": "2026-08-12T21:02:18.771Z"
+        }
+      },
+      {
+        "id": "line_ff6362fe-a8dd-43a7-9f97-f98b042c8ae9",
+        "kind": "lyric",
+        "sectionBreakBefore": true,
+        "text": "時を虎視眈々と窺う",
+        "startMs": 66150,
+        "endMs": null,
+        "voice": null,
+        "translations": [
+          {
+            "id": "translation_00c63189-2eab-4751-80e9-6c948748a527",
+            "language": "en",
+            "text": "Watching and waiting for the moment",
+            "provenance": {
+              "kind": "import",
+              "createdAt": "2026-08-12T21:02:18.771Z"
+            }
+          },
+          {
+            "id": "translation_f4d3709e-dd9e-4b75-bb63-ee98fbd3aa55",
+            "language": "ja-Latn",
+            "text": "toki wo koshitantan to ukagau",
+            "provenance": {
+              "kind": "import",
+              "createdAt": "2026-08-12T21:02:18.771Z"
+            }
+          }
+        ],
+        "furigana": [
+          {
+            "start": 0,
+            "end": 1,
+            "base": "時",
+            "reading": "とき"
+          },
+          {
+            "start": 2,
+            "end": 6,
+            "base": "虎視眈々",
+            "reading": "こしたんたん"
+          },
+          {
+            "start": 7,
+            "end": 8,
+            "base": "窺",
+            "reading": "うかが"
+          }
+        ],
+        "words": [],
+        "reviewState": "unreviewed",
+        "provenance": {
+          "kind": "import",
+          "createdAt": "2026-08-12T21:02:18.771Z"
+        }
+      },
+      {
+        "id": "line_2186f356-6cb9-40e9-8a8e-92c8aac76b8b",
+        "kind": "instrumental",
+        "sectionBreakBefore": true,
+        "text": "",
+        "startMs": 69222,
+        "endMs": null,
+        "voice": null,
+        "translations": [],
+        "furigana": [],
+        "words": [],
+        "reviewState": "unreviewed",
+        "provenance": {
+          "kind": "import",
+          "createdAt": "2026-08-12T21:02:18.771Z"
+        }
+      },
+      {
+        "id": "line_c1f1f97e-a588-41ab-b18e-ae9caedcf767",
+        "kind": "lyric",
+        "sectionBreakBefore": true,
+        "text": "Ah 優雅に罠をすり抜ける 君は変幻自在 Like a wonder",
+        "startMs": 73355,
+        "endMs": null,
+        "voice": null,
+        "translations": [
+          {
+            "id": "translation_889026ff-7c43-4d91-b984-aa7b34c327b4",
+            "language": "en",
+            "text": "Ah, slipping through traps with grace — you're ever-changing, like a wonder",
+            "provenance": {
+              "kind": "import",
+              "createdAt": "2026-08-12T21:02:18.771Z"
+            }
+          },
+          {
+            "id": "translation_95397311-8361-4736-bcab-c0cc79417f16",
+            "language": "ja-Latn",
+            "text": "Ah yuuga ni wana wo surinukeru kimi wa hengenjizai Like a wonder",
+            "provenance": {
+              "kind": "import",
+              "createdAt": "2026-08-12T21:02:18.771Z"
+            }
+          }
+        ],
+        "furigana": [
+          {
+            "start": 3,
+            "end": 5,
+            "base": "優雅",
+            "reading": "ゆうが"
+          },
+          {
+            "start": 6,
+            "end": 7,
+            "base": "罠",
+            "reading": "わな"
+          },
+          {
+            "start": 10,
+            "end": 11,
+            "base": "抜",
+            "reading": "ぬ"
+          },
+          {
+            "start": 14,
+            "end": 15,
+            "base": "君",
+            "reading": "きみ"
+          },
+          {
+            "start": 16,
+            "end": 20,
+            "base": "変幻自在",
+            "reading": "へんげんじざい"
+          }
+        ],
+        "words": [],
+        "reviewState": "unreviewed",
+        "provenance": {
+          "kind": "import",
+          "createdAt": "2026-08-12T21:02:18.771Z"
+        }
+      },
+      {
+        "id": "line_7258c6da-7ee8-4e68-8847-64be95f067af",
+        "kind": "lyric",
+        "sectionBreakBefore": true,
+        "text": "まるで回るレコードの上 ノセられて Keep walking",
+        "startMs": 78340,
+        "endMs": null,
+        "voice": null,
+        "translations": [
+          {
+            "id": "translation_4837ed60-e456-4302-8bac-a5a23fdc99c2",
+            "language": "en",
+            "text": "Like riding a spinning record — swept up in the groove, keep walking",
+            "provenance": {
+              "kind": "import",
+              "createdAt": "2026-08-12T21:02:18.771Z"
+            }
+          },
+          {
+            "id": "translation_a3b88175-3dea-4d0f-b902-81da0d0786e4",
+            "language": "ja-Latn",
+            "text": "marude mawaru rekoodo no ue noserarete Keep walking",
+            "provenance": {
+              "kind": "import",
+              "createdAt": "2026-08-12T21:02:18.771Z"
+            }
+          }
+        ],
+        "furigana": [
+          {
+            "start": 3,
+            "end": 4,
+            "base": "回",
+            "reading": "まわ"
+          },
+          {
+            "start": 10,
+            "end": 11,
+            "base": "上",
+            "reading": "うえ"
+          }
+        ],
+        "words": [],
+        "reviewState": "unreviewed",
+        "provenance": {
+          "kind": "import",
+          "createdAt": "2026-08-12T21:02:18.771Z"
+        }
+      },
+      {
+        "id": "line_d62701c9-da36-48c9-b009-7e7c41e3b5b7",
+        "kind": "lyric",
+        "sectionBreakBefore": true,
+        "text": "空っぽグラス Can i get another one?",
+        "startMs": 82810,
+        "endMs": null,
+        "voice": null,
+        "translations": [
+          {
+            "id": "translation_e154d233-8776-48b2-ae8c-277a5c647140",
+            "language": "en",
+            "text": "Empty glass — can I get another one?",
+            "provenance": {
+              "kind": "import",
+              "createdAt": "2026-08-12T21:02:18.771Z"
+            }
+          },
+          {
+            "id": "translation_a68b05b2-266b-43c0-8f76-a06f236dc1b8",
+            "language": "ja-Latn",
+            "text": "karappo gurasu Can I get another one?",
+            "provenance": {
+              "kind": "import",
+              "createdAt": "2026-08-12T21:02:18.771Z"
+            }
+          }
+        ],
+        "furigana": [
+          {
+            "start": 0,
+            "end": 1,
+            "base": "空",
+            "reading": "から"
+          }
+        ],
+        "words": [],
+        "reviewState": "unreviewed",
+        "provenance": {
+          "kind": "import",
+          "createdAt": "2026-08-12T21:02:18.771Z"
+        }
+      },
+      {
+        "id": "line_5102a775-ba9d-4ed1-ade7-aa889255b0aa",
+        "kind": "lyric",
+        "sectionBreakBefore": true,
+        "text": "ハニかんで見つめりゃ Fallin' fallin'",
+        "startMs": 85470,
+        "endMs": null,
+        "voice": null,
+        "translations": [
+          {
+            "id": "translation_94f6917b-6286-4bb2-b0bc-432afa469f7b",
+            "language": "en",
+            "text": "Gazing with a shy smile — fallin' fallin'",
+            "provenance": {
+              "kind": "import",
+              "createdAt": "2026-08-12T21:02:18.771Z"
+            }
+          },
+          {
+            "id": "translation_4c7fdbc1-a367-49e5-85b2-373400c0d752",
+            "language": "ja-Latn",
+            "text": "hanikande mitsumerya Fallin' fallin'",
+            "provenance": {
+              "kind": "import",
+              "createdAt": "2026-08-12T21:02:18.771Z"
+            }
+          }
+        ],
+        "furigana": [
+          {
+            "start": 5,
+            "end": 6,
+            "base": "見",
+            "reading": "み"
+          }
+        ],
+        "words": [],
+        "reviewState": "unreviewed",
+        "provenance": {
+          "kind": "import",
+          "createdAt": "2026-08-12T21:02:18.771Z"
+        }
+      },
+      {
+        "id": "line_d4f39875-d330-4e91-93aa-081794d65176",
+        "kind": "lyric",
+        "sectionBreakBefore": true,
+        "text": "調子はどう？まだイケる？",
+        "startMs": 87890,
+        "endMs": null,
+        "voice": null,
+        "translations": [
+          {
+            "id": "translation_6cf10e61-99c2-4c59-a1bd-f89e5018377e",
+            "language": "en",
+            "text": "How are you holding up? Still going?",
+            "provenance": {
+              "kind": "import",
+              "createdAt": "2026-08-12T21:02:18.771Z"
+            }
+          },
+          {
+            "id": "translation_af1218ba-afb8-4bfe-a725-c1871a41cae0",
+            "language": "ja-Latn",
+            "text": "choushi wa dou? mada ikeru?",
+            "provenance": {
+              "kind": "import",
+              "createdAt": "2026-08-12T21:02:18.771Z"
+            }
+          }
+        ],
+        "furigana": [
+          {
+            "start": 0,
+            "end": 2,
+            "base": "調子",
+            "reading": "ちょうし"
+          }
+        ],
+        "words": [],
+        "reviewState": "unreviewed",
+        "provenance": {
+          "kind": "import",
+          "createdAt": "2026-08-12T21:02:18.771Z"
+        }
+      },
+      {
+        "id": "line_58971967-779b-4957-8bf6-96c43f5bc19f",
+        "kind": "lyric",
+        "sectionBreakBefore": true,
+        "text": "それなら？ムチャしよう",
+        "startMs": 89290,
+        "endMs": null,
+        "voice": null,
+        "translations": [
+          {
+            "id": "translation_412cda5c-7ef3-4663-93de-173644bbb274",
+            "language": "en",
+            "text": "Then shall we go wild?",
+            "provenance": {
+              "kind": "import",
+              "createdAt": "2026-08-12T21:02:18.771Z"
+            }
+          },
+          {
+            "id": "translation_f12cbe94-8483-4c4d-9084-0a8d3cab117c",
+            "language": "ja-Latn",
+            "text": "sore nara? mucha shiyou",
+            "provenance": {
+              "kind": "import",
+              "createdAt": "2026-08-12T21:02:18.771Z"
+            }
+          }
+        ],
+        "furigana": [],
+        "words": [],
+        "reviewState": "unreviewed",
+        "provenance": {
+          "kind": "import",
+          "createdAt": "2026-08-12T21:02:18.771Z"
+        }
+      },
+      {
+        "id": "line_2e94fd1b-134a-45fc-b787-69d6990fcfb6",
+        "kind": "lyric",
+        "sectionBreakBefore": true,
+        "text": "Trust me now 茶番じゃなくVerse2 の purpose",
+        "startMs": 90290,
+        "endMs": null,
+        "voice": null,
+        "translations": [
+          {
+            "id": "translation_7f9f27f4-3441-4aa2-ac00-8679d3b9a588",
+            "language": "en",
+            "text": "Trust me now — this isn't a farce, it's Verse 2's purpose",
+            "provenance": {
+              "kind": "import",
+              "createdAt": "2026-08-12T21:02:18.771Z"
+            }
+          },
+          {
+            "id": "translation_c4beeeff-cab6-40ae-86b3-8442ed2c3ae6",
+            "language": "ja-Latn",
+            "text": "Trust me now chaban ja naku Verse2 no purpose",
+            "provenance": {
+              "kind": "import",
+              "createdAt": "2026-08-12T21:02:18.771Z"
+            }
+          }
+        ],
+        "furigana": [
+          {
+            "start": 13,
+            "end": 15,
+            "base": "茶番",
+            "reading": "ちゃばん"
+          }
+        ],
+        "words": [],
+        "reviewState": "unreviewed",
+        "provenance": {
+          "kind": "import",
+          "createdAt": "2026-08-12T21:02:18.771Z"
+        }
+      },
+      {
+        "id": "line_d10ac68e-ba22-4a42-a753-e8844d5c3554",
+        "kind": "lyric",
+        "sectionBreakBefore": true,
+        "text": "コイセヨ アイセヨ コガレロ 油断大敵",
+        "startMs": 92630,
+        "endMs": null,
+        "voice": null,
+        "translations": [
+          {
+            "id": "translation_c0d5f21c-de82-4237-bf13-283c8451baca",
+            "language": "en",
+            "text": "Fall in love, embrace love, yearn — never let your guard down",
+            "provenance": {
+              "kind": "import",
+              "createdAt": "2026-08-12T21:02:18.771Z"
+            }
+          },
+          {
+            "id": "translation_04545ff1-3093-4417-a71f-3876f2bb88c3",
+            "language": "ja-Latn",
+            "text": "koiseyo aiseyo kogarero yudantaiteki",
+            "provenance": {
+              "kind": "import",
+              "createdAt": "2026-08-12T21:02:18.771Z"
+            }
+          }
+        ],
+        "furigana": [
+          {
+            "start": 15,
+            "end": 19,
+            "base": "油断大敵",
+            "reading": "ゆだんたいてき"
+          }
+        ],
+        "words": [],
+        "reviewState": "unreviewed",
+        "provenance": {
+          "kind": "import",
+          "createdAt": "2026-08-12T21:02:18.771Z"
+        }
+      },
+      {
+        "id": "line_689aadd7-045e-42b8-8032-3af1a5224193",
+        "kind": "lyric",
+        "sectionBreakBefore": true,
+        "text": "ユラリ揺れる燃ゆる Flame 焦りは禁物さ Balalaika",
+        "startMs": 102440,
+        "endMs": null,
+        "voice": null,
+        "translations": [
+          {
+            "id": "translation_e07d55b7-6b78-4bca-88db-69f1828e47cf",
+            "language": "en",
+            "text": "The flame sways and burns — no rushing now, Balalaika",
+            "provenance": {
+              "kind": "import",
+              "createdAt": "2026-08-12T21:02:18.771Z"
+            }
+          },
+          {
+            "id": "translation_fa30d692-e433-4502-bbc1-39deb611a31b",
+            "language": "ja-Latn",
+            "text": "yurari yureru moyuru Flame aseri wa kinmotsu sa Balalaika",
+            "provenance": {
+              "kind": "import",
+              "createdAt": "2026-08-12T21:02:18.771Z"
+            }
+          }
+        ],
+        "furigana": [
+          {
+            "start": 3,
+            "end": 4,
+            "base": "揺",
+            "reading": "ゆ"
+          },
+          {
+            "start": 6,
+            "end": 7,
+            "base": "燃",
+            "reading": "も"
+          },
+          {
+            "start": 16,
+            "end": 17,
+            "base": "焦",
+            "reading": "あせ"
+          },
+          {
+            "start": 19,
+            "end": 21,
+            "base": "禁物",
+            "reading": "きんもつ"
+          }
+        ],
+        "words": [],
+        "reviewState": "unreviewed",
+        "provenance": {
+          "kind": "import",
+          "createdAt": "2026-08-12T21:02:18.771Z"
+        }
+      },
+      {
+        "id": "line_9d42fda6-1f9c-447c-9fd5-abf6a9b7d342",
+        "kind": "lyric",
+        "sectionBreakBefore": true,
+        "text": "恐れないで Gatta get your groove on!",
+        "startMs": 107480,
+        "endMs": null,
+        "voice": null,
+        "translations": [
+          {
+            "id": "translation_c88c1e03-58e6-4305-b6fe-294149caf7f5",
+            "language": "en",
+            "text": "Don't be afraid — gotta get your groove on!",
+            "provenance": {
+              "kind": "import",
+              "createdAt": "2026-08-12T21:02:18.771Z"
+            }
+          },
+          {
+            "id": "translation_c1636ac7-9ced-4754-9076-2d3543ad7c2e",
+            "language": "ja-Latn",
+            "text": "osorenaide Gatta get your groove on!",
+            "provenance": {
+              "kind": "import",
+              "createdAt": "2026-08-12T21:02:18.771Z"
+            }
+          }
+        ],
+        "furigana": [
+          {
+            "start": 0,
+            "end": 1,
+            "base": "恐",
+            "reading": "おそ"
+          }
+        ],
+        "words": [],
+        "reviewState": "unreviewed",
+        "provenance": {
+          "kind": "import",
+          "createdAt": "2026-08-12T21:02:18.771Z"
+        }
+      },
+      {
+        "id": "line_9669f959-a701-46a9-a6b1-bedade9f9dd5",
+        "kind": "lyric",
+        "sectionBreakBefore": true,
+        "text": "DARA-DA-DA-RA-DA RA-DA-DA-RA",
+        "startMs": 109550,
+        "endMs": null,
+        "voice": null,
+        "translations": [],
+        "furigana": [],
+        "words": [],
+        "reviewState": "unreviewed",
+        "provenance": {
+          "kind": "import",
+          "createdAt": "2026-08-12T21:02:18.771Z"
+        }
+      },
+      {
+        "id": "line_6962e59b-cf59-409f-80fa-48031d2af247",
+        "kind": "lyric",
+        "sectionBreakBefore": true,
+        "text": "誰が何言おうが No Way! 心変わりするはずがないんだ",
+        "startMs": 111940,
+        "endMs": null,
+        "voice": null,
+        "translations": [
+          {
+            "id": "translation_e569c16b-3ee3-4c4c-b867-0fef8929e5de",
+            "language": "en",
+            "text": "No matter what anyone says — no way, there's no chance my heart will change",
+            "provenance": {
+              "kind": "import",
+              "createdAt": "2026-08-12T21:02:18.771Z"
+            }
+          },
+          {
+            "id": "translation_df96344a-0aea-493c-b390-bde7d4a411c0",
+            "language": "ja-Latn",
+            "text": "dare ga nani iou ga No Way! kokorogawari suru hazu ga nai n da",
+            "provenance": {
+              "kind": "import",
+              "createdAt": "2026-08-12T21:02:18.771Z"
+            }
+          }
+        ],
+        "furigana": [
+          {
+            "start": 0,
+            "end": 1,
+            "base": "誰",
+            "reading": "だれ"
+          },
+          {
+            "start": 2,
+            "end": 3,
+            "base": "何",
+            "reading": "なに"
+          },
+          {
+            "start": 3,
+            "end": 4,
+            "base": "言",
+            "reading": "い"
+          },
+          {
+            "start": 16,
+            "end": 17,
+            "base": "心",
+            "reading": "こころ"
+          },
+          {
+            "start": 17,
+            "end": 18,
+            "base": "変",
+            "reading": "か"
+          }
+        ],
+        "words": [],
+        "reviewState": "unreviewed",
+        "provenance": {
+          "kind": "import",
+          "createdAt": "2026-08-12T21:02:18.771Z"
+        }
+      },
+      {
+        "id": "line_abbe20ac-3a46-4660-ab9e-5d1987e3f7d4",
+        "kind": "lyric",
+        "sectionBreakBefore": true,
+        "text": "君がいいの Can't stop my heart",
+        "startMs": 116700,
+        "endMs": null,
+        "voice": null,
+        "translations": [
+          {
+            "id": "translation_8437601d-1395-47fa-a547-f21ab3186290",
+            "language": "en",
+            "text": "It's you I want — can't stop my heart",
+            "provenance": {
+              "kind": "import",
+              "createdAt": "2026-08-12T21:02:18.771Z"
+            }
+          },
+          {
+            "id": "translation_8d830206-fba0-4a98-afbd-3b35c6ac2480",
+            "language": "ja-Latn",
+            "text": "kimi ga ii no Can't stop my heart",
+            "provenance": {
+              "kind": "import",
+              "createdAt": "2026-08-12T21:02:18.771Z"
+            }
+          }
+        ],
+        "furigana": [
+          {
+            "start": 0,
+            "end": 1,
+            "base": "君",
+            "reading": "きみ"
+          }
+        ],
+        "words": [],
+        "reviewState": "unreviewed",
+        "provenance": {
+          "kind": "import",
+          "createdAt": "2026-08-12T21:02:18.771Z"
+        }
+      },
+      {
+        "id": "line_39e884d7-386e-4461-adaa-285632a1e3ea",
+        "kind": "lyric",
+        "sectionBreakBefore": true,
+        "text": "時を虎視眈々と窺うわ",
+        "startMs": 119200,
+        "endMs": null,
+        "voice": null,
+        "translations": [
+          {
+            "id": "translation_2b6d6f19-aa58-4edc-913f-e8a70056654d",
+            "language": "en",
+            "text": "I watch and wait for my moment with patient eyes",
+            "provenance": {
+              "kind": "import",
+              "createdAt": "2026-08-12T21:02:18.771Z"
+            }
+          },
+          {
+            "id": "translation_84c090fd-b591-4f25-8c37-b41e9b7f7dae",
+            "language": "ja-Latn",
+            "text": "toki wo koshitantan to ukagau wa",
+            "provenance": {
+              "kind": "import",
+              "createdAt": "2026-08-12T21:02:18.771Z"
+            }
+          }
+        ],
+        "furigana": [
+          {
+            "start": 0,
+            "end": 1,
+            "base": "時",
+            "reading": "とき"
+          },
+          {
+            "start": 2,
+            "end": 6,
+            "base": "虎視眈々",
+            "reading": "こしたんたん"
+          },
+          {
+            "start": 7,
+            "end": 8,
+            "base": "窺",
+            "reading": "うかが"
+          }
+        ],
+        "words": [],
+        "reviewState": "unreviewed",
+        "provenance": {
+          "kind": "import",
+          "createdAt": "2026-08-12T21:02:18.771Z"
+        }
+      },
+      {
+        "id": "line_1323b738-219c-48c6-adb0-13556cd0b2e1",
+        "kind": "instrumental",
+        "sectionBreakBefore": true,
+        "text": "",
+        "startMs": 122030,
+        "endMs": null,
+        "voice": null,
+        "translations": [],
+        "furigana": [],
+        "words": [],
+        "reviewState": "unreviewed",
+        "provenance": {
+          "kind": "import",
+          "createdAt": "2026-08-12T21:02:18.771Z"
+        }
+      },
+      {
+        "id": "line_e27c08ed-24a0-42a5-a43d-46d2a1b509eb",
+        "kind": "lyric",
+        "sectionBreakBefore": true,
+        "text": "時を虎視眈々と窺う",
+        "startMs": 128620,
+        "endMs": null,
+        "voice": null,
+        "translations": [
+          {
+            "id": "translation_2ed40863-39c9-45cf-8905-238ae8f797cc",
+            "language": "en",
+            "text": "Watching and waiting for the moment",
+            "provenance": {
+              "kind": "import",
+              "createdAt": "2026-08-12T21:02:18.771Z"
+            }
+          },
+          {
+            "id": "translation_9cba4aa9-14e3-406b-a9d2-f15dc95dbcd1",
+            "language": "ja-Latn",
+            "text": "toki wo koshitantan to ukagau",
+            "provenance": {
+              "kind": "import",
+              "createdAt": "2026-08-12T21:02:18.771Z"
+            }
+          }
+        ],
+        "furigana": [
+          {
+            "start": 0,
+            "end": 1,
+            "base": "時",
+            "reading": "とき"
+          },
+          {
+            "start": 2,
+            "end": 6,
+            "base": "虎視眈々",
+            "reading": "こしたんたん"
+          },
+          {
+            "start": 7,
+            "end": 8,
+            "base": "窺",
+            "reading": "うかが"
+          }
+        ],
+        "words": [],
+        "reviewState": "unreviewed",
+        "provenance": {
+          "kind": "import",
+          "createdAt": "2026-08-12T21:02:18.771Z"
+        }
+      },
+      {
+        "id": "line_c61fef1b-d25c-46e9-beb6-89893a16fad4",
+        "kind": "lyric",
+        "sectionBreakBefore": true,
+        "text": "Everybody! Just move your body!",
+        "startMs": 131290,
+        "endMs": null,
+        "voice": null,
+        "translations": [],
+        "furigana": [],
+        "words": [],
+        "reviewState": "unreviewed",
+        "provenance": {
+          "kind": "import",
+          "createdAt": "2026-08-12T21:02:18.771Z"
+        }
+      },
+      {
+        "id": "line_6e344f4f-3cfd-4347-99a6-9271d7a3f3fb",
+        "kind": "lyric",
+        "sectionBreakBefore": true,
+        "text": "Don't be shy! スポットライト浴びて！",
+        "startMs": 133960,
+        "endMs": null,
+        "voice": null,
+        "translations": [
+          {
+            "id": "translation_a38d850e-632b-44b0-afa6-354d2c62f5d1",
+            "language": "en",
+            "text": "Don't be shy! Bask in the spotlight!",
+            "provenance": {
+              "kind": "import",
+              "createdAt": "2026-08-12T21:02:18.771Z"
+            }
+          },
+          {
+            "id": "translation_1f04f174-39fb-4520-a6a0-2838f922ee89",
+            "language": "ja-Latn",
+            "text": "Don't be shy! supotturaito abite!",
+            "provenance": {
+              "kind": "import",
+              "createdAt": "2026-08-12T21:02:18.771Z"
+            }
+          }
+        ],
+        "furigana": [
+          {
+            "start": 21,
+            "end": 22,
+            "base": "浴",
+            "reading": "あ"
+          }
+        ],
+        "words": [],
+        "reviewState": "unreviewed",
+        "provenance": {
+          "kind": "import",
+          "createdAt": "2026-08-12T21:02:18.771Z"
+        }
+      },
+      {
+        "id": "line_7fc94dfe-74c4-4874-9156-10714ccbd7d0",
+        "kind": "lyric",
+        "sectionBreakBefore": true,
+        "text": "Everybody! Just move your body!",
+        "startMs": 136320,
+        "endMs": null,
+        "voice": null,
+        "translations": [],
+        "furigana": [],
+        "words": [],
+        "reviewState": "unreviewed",
+        "provenance": {
+          "kind": "import",
+          "createdAt": "2026-08-12T21:02:18.771Z"
+        }
+      },
+      {
+        "id": "line_57fb4be3-ad97-446a-b43b-07c922519d7b",
+        "kind": "lyric",
+        "sectionBreakBefore": true,
+        "text": "もうすぐさ フィナーレ",
+        "startMs": 138410,
+        "endMs": null,
+        "voice": null,
+        "translations": [
+          {
+            "id": "translation_c46e58cf-e99c-4302-bd61-c9473e0e8b85",
+            "language": "en",
+            "text": "The finale is almost here",
+            "provenance": {
+              "kind": "import",
+              "createdAt": "2026-08-12T21:02:18.771Z"
+            }
+          },
+          {
+            "id": "translation_bc912bb4-c1c5-4cfd-b543-dd632aedde28",
+            "language": "ja-Latn",
+            "text": "mou sugu sa finaare",
+            "provenance": {
+              "kind": "import",
+              "createdAt": "2026-08-12T21:02:18.771Z"
+            }
+          }
+        ],
+        "furigana": [],
+        "words": [],
+        "reviewState": "unreviewed",
+        "provenance": {
+          "kind": "import",
+          "createdAt": "2026-08-12T21:02:18.771Z"
+        }
+      },
+      {
+        "id": "line_307fc5a3-910b-43b7-a060-981a6e921a74",
+        "kind": "lyric",
+        "sectionBreakBefore": true,
+        "text": "ジリジリと狼煙上げ 遊糸が惑わせる",
+        "startMs": 141330,
+        "endMs": null,
+        "voice": null,
+        "translations": [
+          {
+            "id": "translation_16c99ef3-5e8f-48ba-9324-fba6e0fdced7",
+            "language": "en",
+            "text": "Slowly sending up smoke signals, shimmering threads lead astray",
+            "provenance": {
+              "kind": "import",
+              "createdAt": "2026-08-12T21:02:18.771Z"
+            }
+          },
+          {
+            "id": "translation_d47f1e97-277f-4457-8ad5-4d38f8689c28",
+            "language": "ja-Latn",
+            "text": "jirijiri to noroshi age yuushi ga madowaseru",
+            "provenance": {
+              "kind": "import",
+              "createdAt": "2026-08-12T21:02:18.771Z"
+            }
+          }
+        ],
+        "furigana": [
+          {
+            "start": 5,
+            "end": 7,
+            "base": "狼煙",
+            "reading": "のろし"
+          },
+          {
+            "start": 7,
+            "end": 8,
+            "base": "上",
+            "reading": "あ"
+          },
+          {
+            "start": 10,
+            "end": 12,
+            "base": "遊糸",
+            "reading": "ゆうし"
+          },
+          {
+            "start": 13,
+            "end": 14,
+            "base": "惑",
+            "reading": "まど"
+          }
+        ],
+        "words": [],
+        "reviewState": "unreviewed",
+        "provenance": {
+          "kind": "import",
+          "createdAt": "2026-08-12T21:02:18.771Z"
+        }
+      },
+      {
+        "id": "line_eb69a6a4-f78f-4606-a320-4891e661bb8b",
+        "kind": "lyric",
+        "sectionBreakBefore": true,
+        "text": "白濁に飲まれ I'm crazy for you! Ah",
+        "startMs": 145400,
+        "endMs": null,
+        "voice": null,
+        "translations": [
+          {
+            "id": "translation_d52bde7a-e555-4cf3-b2e3-17c88fb89ce6",
+            "language": "en",
+            "text": "Swallowed in white haze — I'm crazy for you! Ah",
+            "provenance": {
+              "kind": "import",
+              "createdAt": "2026-08-12T21:02:18.771Z"
+            }
+          },
+          {
+            "id": "translation_2c85417e-59ea-4908-be7c-fec1afe15e4f",
+            "language": "ja-Latn",
+            "text": "hakudaku ni nomare I'm crazy for you! Ah",
+            "provenance": {
+              "kind": "import",
+              "createdAt": "2026-08-12T21:02:18.771Z"
+            }
+          }
+        ],
+        "furigana": [
+          {
+            "start": 0,
+            "end": 2,
+            "base": "白濁",
+            "reading": "はくだく"
+          },
+          {
+            "start": 3,
+            "end": 4,
+            "base": "飲",
+            "reading": "の"
+          }
+        ],
+        "words": [],
+        "reviewState": "unreviewed",
+        "provenance": {
+          "kind": "import",
+          "createdAt": "2026-08-12T21:02:18.771Z"
+        }
+      },
+      {
+        "id": "line_763af846-508d-469b-ba30-f953bf4f2e6a",
+        "kind": "lyric",
+        "sectionBreakBefore": true,
+        "text": "ユラリ揺れる燃ゆる Flame 焦りは禁物さ Balalaika",
+        "startMs": 150370,
+        "endMs": null,
+        "voice": null,
+        "translations": [
+          {
+            "id": "translation_e73535db-0018-4d0d-a8cb-12ab70ddd73c",
+            "language": "en",
+            "text": "The flame sways and burns — no rushing now, Balalaika",
+            "provenance": {
+              "kind": "import",
+              "createdAt": "2026-08-12T21:02:18.771Z"
+            }
+          },
+          {
+            "id": "translation_5e82c081-3d2e-461c-a238-0f0362d1c0a9",
+            "language": "ja-Latn",
+            "text": "yurari yureru moyuru Flame aseri wa kinmotsu sa Balalaika",
+            "provenance": {
+              "kind": "import",
+              "createdAt": "2026-08-12T21:02:18.771Z"
+            }
+          }
+        ],
+        "furigana": [
+          {
+            "start": 3,
+            "end": 4,
+            "base": "揺",
+            "reading": "ゆ"
+          },
+          {
+            "start": 6,
+            "end": 7,
+            "base": "燃",
+            "reading": "も"
+          },
+          {
+            "start": 16,
+            "end": 17,
+            "base": "焦",
+            "reading": "あせ"
+          },
+          {
+            "start": 19,
+            "end": 21,
+            "base": "禁物",
+            "reading": "きんもつ"
+          }
+        ],
+        "words": [],
+        "reviewState": "unreviewed",
+        "provenance": {
+          "kind": "import",
+          "createdAt": "2026-08-12T21:02:18.771Z"
+        }
+      },
+      {
+        "id": "line_ce19b8c6-e930-4486-9a63-e659ea27b69c",
+        "kind": "lyric",
+        "sectionBreakBefore": true,
+        "text": "恐れないで Gatta get your groove on!",
+        "startMs": 154860,
+        "endMs": null,
+        "voice": null,
+        "translations": [
+          {
+            "id": "translation_2f7aef29-f70e-470d-bebd-c491441711f5",
+            "language": "en",
+            "text": "Don't be afraid — gotta get your groove on!",
+            "provenance": {
+              "kind": "import",
+              "createdAt": "2026-08-12T21:02:18.771Z"
+            }
+          },
+          {
+            "id": "translation_ff35e764-1812-416e-aa49-047b4a1d0cb7",
+            "language": "ja-Latn",
+            "text": "osorenaide Gatta get your groove on!",
+            "provenance": {
+              "kind": "import",
+              "createdAt": "2026-08-12T21:02:18.771Z"
+            }
+          }
+        ],
+        "furigana": [
+          {
+            "start": 0,
+            "end": 1,
+            "base": "恐",
+            "reading": "おそ"
+          }
+        ],
+        "words": [],
+        "reviewState": "unreviewed",
+        "provenance": {
+          "kind": "import",
+          "createdAt": "2026-08-12T21:02:18.771Z"
+        }
+      },
+      {
+        "id": "line_a6d571ea-06f7-4074-9fbd-f55329323169",
+        "kind": "lyric",
+        "sectionBreakBefore": true,
+        "text": "DARA-DA-DA-RA-DA RA-DA-DA-RA",
+        "startMs": 157250,
+        "endMs": null,
+        "voice": null,
+        "translations": [],
+        "furigana": [],
+        "words": [],
+        "reviewState": "unreviewed",
+        "provenance": {
+          "kind": "import",
+          "createdAt": "2026-08-12T21:02:18.771Z"
+        }
+      },
+      {
+        "id": "line_fa297a2a-1156-4f09-ba60-b26967619540",
+        "kind": "lyric",
+        "sectionBreakBefore": true,
+        "text": "誰が何言おうが No way! 心変わりするはずがないんだ",
+        "startMs": 159820,
+        "endMs": null,
+        "voice": null,
+        "translations": [
+          {
+            "id": "translation_6070050c-de47-485f-9679-e58458aa5deb",
+            "language": "en",
+            "text": "No matter what anyone says — no way, there's no chance my heart will change",
+            "provenance": {
+              "kind": "import",
+              "createdAt": "2026-08-12T21:02:18.771Z"
+            }
+          },
+          {
+            "id": "translation_53f43605-9da5-421d-a15c-876ac4f870ff",
+            "language": "ja-Latn",
+            "text": "dare ga nani iou ga No way! kokorogawari suru hazu ga nai n da",
+            "provenance": {
+              "kind": "import",
+              "createdAt": "2026-08-12T21:02:18.771Z"
+            }
+          }
+        ],
+        "furigana": [
+          {
+            "start": 0,
+            "end": 1,
+            "base": "誰",
+            "reading": "だれ"
+          },
+          {
+            "start": 2,
+            "end": 3,
+            "base": "何",
+            "reading": "なに"
+          },
+          {
+            "start": 3,
+            "end": 4,
+            "base": "言",
+            "reading": "い"
+          },
+          {
+            "start": 16,
+            "end": 17,
+            "base": "心",
+            "reading": "こころ"
+          },
+          {
+            "start": 17,
+            "end": 18,
+            "base": "変",
+            "reading": "か"
+          }
+        ],
+        "words": [],
+        "reviewState": "unreviewed",
+        "provenance": {
+          "kind": "import",
+          "createdAt": "2026-08-12T21:02:18.771Z"
+        }
+      },
+      {
+        "id": "line_862236c5-e9e7-46a4-8396-768b0471209e",
+        "kind": "lyric",
+        "sectionBreakBefore": true,
+        "text": "君がいいの Can't stop my heart",
+        "startMs": 164650,
+        "endMs": null,
+        "voice": null,
+        "translations": [
+          {
+            "id": "translation_60782551-c616-4092-8671-c0e00d4205df",
+            "language": "en",
+            "text": "It's you I want — can't stop my heart",
+            "provenance": {
+              "kind": "import",
+              "createdAt": "2026-08-12T21:02:18.771Z"
+            }
+          },
+          {
+            "id": "translation_34bbea3b-0a6c-4042-97ee-1ce990a6cc65",
+            "language": "ja-Latn",
+            "text": "kimi ga ii no Can't stop my heart",
+            "provenance": {
+              "kind": "import",
+              "createdAt": "2026-08-12T21:02:18.771Z"
+            }
+          }
+        ],
+        "furigana": [
+          {
+            "start": 0,
+            "end": 1,
+            "base": "君",
+            "reading": "きみ"
+          }
+        ],
+        "words": [],
+        "reviewState": "unreviewed",
+        "provenance": {
+          "kind": "import",
+          "createdAt": "2026-08-12T21:02:18.771Z"
+        }
+      },
+      {
+        "id": "line_ad0a16f9-8e61-4587-a565-b443d3785a3a",
+        "kind": "lyric",
+        "sectionBreakBefore": true,
+        "text": "時を虎視眈々と窺うわ",
+        "startMs": 167010,
+        "endMs": null,
+        "voice": null,
+        "translations": [
+          {
+            "id": "translation_ea0af7e2-be28-425e-9a3f-95ec7a49a56b",
+            "language": "en",
+            "text": "I watch and wait for my moment with patient eyes",
+            "provenance": {
+              "kind": "import",
+              "createdAt": "2026-08-12T21:02:18.771Z"
+            }
+          },
+          {
+            "id": "translation_f9042f21-bdc3-4a7b-b2ab-dfd0640bf2c5",
+            "language": "ja-Latn",
+            "text": "toki wo koshitantan to ukagau wa",
+            "provenance": {
+              "kind": "import",
+              "createdAt": "2026-08-12T21:02:18.771Z"
+            }
+          }
+        ],
+        "furigana": [
+          {
+            "start": 0,
+            "end": 1,
+            "base": "時",
+            "reading": "とき"
+          },
+          {
+            "start": 2,
+            "end": 6,
+            "base": "虎視眈々",
+            "reading": "こしたんたん"
+          },
+          {
+            "start": 7,
+            "end": 8,
+            "base": "窺",
+            "reading": "うかが"
+          }
+        ],
+        "words": [],
+        "reviewState": "unreviewed",
+        "provenance": {
+          "kind": "import",
+          "createdAt": "2026-08-12T21:02:18.771Z"
+        }
+      },
+      {
+        "id": "line_f22a87c4-e5dd-4bb8-b3e5-1a0f38d41419",
+        "kind": "instrumental",
+        "sectionBreakBefore": true,
+        "text": "",
+        "startMs": 171010,
+        "endMs": null,
+        "voice": null,
+        "translations": [],
+        "furigana": [],
+        "words": [],
+        "reviewState": "unreviewed",
+        "provenance": {
+          "kind": "import",
+          "createdAt": "2026-08-12T21:02:18.771Z"
+        }
+      },
+      {
+        "id": "line_f29f9018-0e29-4e14-8574-00eebe2790e8",
+        "kind": "lyric",
+        "sectionBreakBefore": true,
+        "text": "時を虎視眈々と窺う",
+        "startMs": 176780,
+        "endMs": null,
+        "voice": null,
+        "translations": [
+          {
+            "id": "translation_d1f662a3-6cef-4995-bd49-e4f921a8f296",
+            "language": "en",
+            "text": "Watching and waiting for the moment",
+            "provenance": {
+              "kind": "import",
+              "createdAt": "2026-08-12T21:02:18.771Z"
+            }
+          },
+          {
+            "id": "translation_7b550d27-16de-49b0-92d1-cacb18e36921",
+            "language": "ja-Latn",
+            "text": "toki wo koshitantan to ukagau",
+            "provenance": {
+              "kind": "import",
+              "createdAt": "2026-08-12T21:02:18.771Z"
+            }
+          }
+        ],
+        "furigana": [
+          {
+            "start": 0,
+            "end": 1,
+            "base": "時",
+            "reading": "とき"
+          },
+          {
+            "start": 2,
+            "end": 6,
+            "base": "虎視眈々",
+            "reading": "こしたんたん"
+          },
+          {
+            "start": 7,
+            "end": 8,
+            "base": "窺",
+            "reading": "うかが"
+          }
+        ],
+        "words": [],
+        "reviewState": "unreviewed",
+        "provenance": {
+          "kind": "import",
+          "createdAt": "2026-08-12T21:02:18.771Z"
+        }
+      },
+      {
+        "id": "line_7fea1d2a-4e1b-44fa-bb2b-0719edb383a0",
+        "kind": "lyric",
+        "sectionBreakBefore": true,
+        "text": "ユラリ揺れる燃ゆる Flame 焦りは禁物さ Balalaika",
+        "startMs": 179160,
+        "endMs": null,
+        "voice": null,
+        "translations": [
+          {
+            "id": "translation_7b4a17df-06ac-4743-affc-0ac1bea2ab44",
+            "language": "en",
+            "text": "The flame sways and burns — no rushing now, Balalaika",
+            "provenance": {
+              "kind": "import",
+              "createdAt": "2026-08-12T21:02:18.771Z"
+            }
+          },
+          {
+            "id": "translation_fe03878e-a6c5-43ec-aba4-ec786d517199",
+            "language": "ja-Latn",
+            "text": "yurari yureru moyuru Flame aseri wa kinmotsu sa Balalaika",
+            "provenance": {
+              "kind": "import",
+              "createdAt": "2026-08-12T21:02:18.771Z"
+            }
+          }
+        ],
+        "furigana": [
+          {
+            "start": 3,
+            "end": 4,
+            "base": "揺",
+            "reading": "ゆ"
+          },
+          {
+            "start": 6,
+            "end": 7,
+            "base": "燃",
+            "reading": "も"
+          },
+          {
+            "start": 16,
+            "end": 17,
+            "base": "焦",
+            "reading": "あせ"
+          },
+          {
+            "start": 19,
+            "end": 21,
+            "base": "禁物",
+            "reading": "きんもつ"
+          }
+        ],
+        "words": [],
+        "reviewState": "unreviewed",
+        "provenance": {
+          "kind": "import",
+          "createdAt": "2026-08-12T21:02:18.771Z"
+        }
+      },
+      {
+        "id": "line_952625a5-b7c9-428d-9a75-05c5f1a5c27f",
+        "kind": "lyric",
+        "sectionBreakBefore": true,
+        "text": "君がいいの Can't stop my heart",
+        "startMs": 183680,
+        "endMs": null,
+        "voice": null,
+        "translations": [
+          {
+            "id": "translation_31293992-2dbe-4408-b6b1-48f0cab9ca58",
+            "language": "en",
+            "text": "It's you I want — can't stop my heart",
+            "provenance": {
+              "kind": "import",
+              "createdAt": "2026-08-12T21:02:18.771Z"
+            }
+          },
+          {
+            "id": "translation_054d9ace-332a-41e6-bf4a-af0e505d3a81",
+            "language": "ja-Latn",
+            "text": "kimi ga ii no Can't stop my heart",
+            "provenance": {
+              "kind": "import",
+              "createdAt": "2026-08-12T21:02:18.771Z"
+            }
+          }
+        ],
+        "furigana": [
+          {
+            "start": 0,
+            "end": 1,
+            "base": "君",
+            "reading": "きみ"
+          }
+        ],
+        "words": [],
+        "reviewState": "unreviewed",
+        "provenance": {
+          "kind": "import",
+          "createdAt": "2026-08-12T21:02:18.771Z"
+        }
+      },
+      {
+        "id": "line_5cbd543e-3b15-46ec-a441-bcf39ba3e59a",
+        "kind": "lyric",
+        "sectionBreakBefore": true,
+        "text": "時を虎視眈々と窺うわ",
+        "startMs": 186040,
+        "endMs": null,
+        "voice": null,
+        "translations": [
+          {
+            "id": "translation_40b986d1-9425-4992-bf98-849b336bb6b2",
+            "language": "en",
+            "text": "I watch and wait for my moment with patient eyes",
+            "provenance": {
+              "kind": "import",
+              "createdAt": "2026-08-12T21:02:18.771Z"
+            }
+          },
+          {
+            "id": "translation_c01fbd3a-018d-46b0-a4eb-038f840d4c0e",
+            "language": "ja-Latn",
+            "text": "toki wo koshitantan to ukagau wa",
+            "provenance": {
+              "kind": "import",
+              "createdAt": "2026-08-12T21:02:18.771Z"
+            }
+          }
+        ],
+        "furigana": [
+          {
+            "start": 0,
+            "end": 1,
+            "base": "時",
+            "reading": "とき"
+          },
+          {
+            "start": 2,
+            "end": 6,
+            "base": "虎視眈々",
+            "reading": "こしたんたん"
+          },
+          {
+            "start": 7,
+            "end": 8,
+            "base": "窺",
+            "reading": "うかが"
+          }
+        ],
+        "words": [],
+        "reviewState": "unreviewed",
+        "provenance": {
+          "kind": "import",
+          "createdAt": "2026-08-12T21:02:18.771Z"
+        }
+      },
+      {
+        "id": "line_fdff5aaa-5d7f-459d-9b3e-9ecd925d2fdb",
+        "kind": "instrumental",
+        "sectionBreakBefore": true,
+        "text": "",
+        "startMs": 189290,
+        "endMs": null,
+        "voice": null,
+        "translations": [],
+        "furigana": [],
+        "words": [],
+        "reviewState": "unreviewed",
+        "provenance": {
+          "kind": "import",
+          "createdAt": "2026-08-12T21:02:18.771Z"
+        }
+      }
+    ]
+  },
+  "exportPreferences": {
+    "format": "xlrc",
+    "includeMetadata": true
+  }
+}

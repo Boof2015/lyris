@@ -1,0 +1,82 @@
+{
+  "name": "lyris",
+  "version": "0.1.0-alpha.1",
+  "description": "Local-first lyric transcription and synchronization workstation",
+  "main": "./out/main/index.js",
+  "scripts": {
+    "dev": "electron-vite dev",
+    "build": "electron-vite build",
+    "preview": "electron-vite preview",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:e2e": "npm run build && playwright test",
+    "check": "npm run typecheck && npm test && npm run build",
+    "dist": "npm run build && electron-builder --publish never",
+    "dist:mac": "npm run build && electron-builder --mac --publish never"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Boof2015/lyris.git"
+  },
+  "author": "Boof2015",
+  "license": "GPL-3.0-only",
+  "dependencies": {
+    "@boof2015/xlrc": "^0.2.1",
+    "@fontsource/inter": "^5.2.8",
+    "@fontsource/jetbrains-mono": "^5.2.8",
+    "music-metadata": "^11.12.3",
+    "react": "^19.2.6",
+    "react-dom": "^19.2.3",
+    "zustand": "^5.0.10"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.55.0",
+    "@tailwindcss/vite": "^4.3.3",
+    "@types/node": "^22.15.0",
+    "@types/react": "^19.2.9",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^5.1.2",
+    "electron": "^40.0.0",
+    "electron-builder": "^26.0.20",
+    "electron-vite": "^5.0.0",
+    "tailwindcss": "^4.3.3",
+    "typescript": "^5.9.3",
+    "vite": "^7.3.1",
+    "vitest": "^4.0.18"
+  },
+  "build": {
+    "appId": "dev.astramusic.lyris",
+    "productName": "Lyris",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "out/**/*"
+    ],
+    "mac": {
+      "target": [
+        "dmg",
+        "zip"
+      ],
+      "category": "public.app-category.music"
+    },
+    "fileAssociations": [
+      {
+        "ext": "lyris",
+        "name": "Lyris Project",
+        "role": "Editor"
+      },
+      {
+        "ext": "xlrc",
+        "name": "XLRC Lyrics",
+        "role": "Editor"
+      },
+      {
+        "ext": "lrc",
+        "name": "LRC Lyrics",
+        "role": "Editor"
+      }
+    ]
+  }
+}
