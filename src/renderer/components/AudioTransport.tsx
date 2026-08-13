@@ -1,4 +1,4 @@
-import { forwardRef, useEffect, useImperativeHandle, useMemo, useRef, useState, type CSSProperties } from 'react'
+import { forwardRef, useEffect, useImperativeHandle, useLayoutEffect, useMemo, useRef, useState, type CSSProperties } from 'react'
 import type { LyricLine } from '../../types/project'
 import { gainToDecibels, normalizationGain } from '../../shared/audio'
 import { deriveLineEnd } from '../../shared/project'
@@ -16,11 +16,16 @@ interface AudioTransportProps {
   sourceUrl: string | null
   lines: LyricLine[]
   selectedLineId: string | null
+  wordTimingActive: boolean
+  selectedWordId: string | null
   loop: boolean
   onSelectLine: (lineId: string) => void
   onTime: (timeMs: number) => void
   onStamp: (timeMs: number) => void
   onMoveMarker: (lineId: string, timeMs: number) => void
+  onSelectWord: (wordId: string) => void
+  onMoveWord: (lineId: string, wordId: string, timeMs: number) => void
+  onTimingIntent: () => void
   previewMarker: { lineId: string; timeMs: number } | null
 }
 
@@ -29,7 +34,11 @@ interface WaveformAnalysis {
   normalizationGain: number
 }
 
-function buildWaveformAnalysis(buffer: AudioBuffer, count = 900): WaveformAnalysis {
+const MAX_AUTOMATIC_WORD_ZOOM = 40
+const MINIMUM_AUTOMATIC_WORD_WINDOW_MS = 6_000
+const AUTOMATIC_WORD_CONTEXT_MULTIPLIER = 1.6
+
+function buildWaveformAnalysis(buffer: AudioBuffer, count = Math.max(900, Math.min(12_000, Math.ceil(buffer.duration * 40)))): WaveformAnalysis {
   const channels = Array.from({ length: buffer.numberOfChannels }, (_, index) => buffer.getChannelData(index))
   const block = Math.max(1, Math.floor(buffer.length / count))
   let globalPeak = 0
@@ -65,7 +74,7 @@ function buildWaveformAnalysis(buffer: AudioBuffer, count = 900): WaveformAnalys
 }
 
 export const AudioTransport = forwardRef<TransportHandle, AudioTransportProps>(function AudioTransport({
-  sourceUrl, lines, selectedLineId, loop, onSelectLine, onTime, onStamp, onMoveMarker, previewMarker,
+  sourceUrl, lines, selectedLineId, wordTimingActive, selectedWordId, loop, onSelectLine, onTime, onStamp, onMoveMarker, onSelectWord, onMoveWord, onTimingIntent, previewMarker,
 }, forwardedRef) {
   const audioRef = useRef<HTMLAudioElement>(null)
   const scrollRef = useRef<HTMLDivElement>(null)
@@ -74,6 +83,10 @@ export const AudioTransport = forwardRef<TransportHandle, AudioTransportProps>(f
   const scrubbingRef = useRef(false)
   const draggingMarkerRef = useRef<string | null>(null)
   const suppressMarkerClickRef = useRef<string | null>(null)
+  const suppressWordClickRef = useRef<string | null>(null)
+  const wordFocusRestoreRef = useRef<{ zoom: number; centerMs: number } | null>(null)
+  const focusAnimationRef = useRef(0)
+  const animatedCenterRef = useRef<number | null>(null)
   const graphRef = useRef<{ context: AudioContext; gain: GainNode } | null>(null)
   const settingsRef = useRef<HTMLDivElement>(null)
   const [durationMs, setDurationMs] = useState(0)
@@ -87,6 +100,7 @@ export const AudioTransport = forwardRef<TransportHandle, AudioTransportProps>(f
   const [gainPercent, setGainPercent] = useState(100)
   const [settingsOpen, setSettingsOpen] = useState(false)
   const [dragMarker, setDragMarker] = useState<{ lineId: string; timeMs: number } | null>(null)
+  const [dragWord, setDragWord] = useState<{ wordId: string; timeMs: number } | null>(null)
   const [hoverMarkerId, setHoverMarkerId] = useState<string | null>(null)
   const [waveformWidth, setWaveformWidth] = useState(0)
   const [waveformScrollLeft, setWaveformScrollLeft] = useState(0)
@@ -97,6 +111,48 @@ export const AudioTransport = forwardRef<TransportHandle, AudioTransportProps>(f
   const effectiveGain = (gainPercent / 100) * (normalize ? measuredGain : 1)
   const rateLabel = rate === 1 ? '1×' : `${rate.toFixed(2).replace(/0$/u, '')}×`
   const zoomLabel = Number.isInteger(zoom) ? `${zoom}×` : `${zoom.toFixed(2).replace(/0$/u, '')}×`
+  const zoomMaximum = wordTimingActive ? 64 : Math.max(8, Math.ceil(zoom))
+
+  const waveformCenterMs = (atZoom = zoom): number => {
+    const scroll = scrollRef.current
+    if (!scroll || !durationMs || !atZoom) return 0
+    const timelinePixels = scroll.clientWidth * atZoom
+    return Math.max(0, Math.min(durationMs, ((scroll.scrollLeft + scroll.clientWidth / 2) / timelinePixels) * durationMs))
+  }
+
+  const animateWaveformView = (targetZoom: number, targetCenterMs: number): void => {
+    const scroll = scrollRef.current
+    if (!scroll || !durationMs) return
+    cancelAnimationFrame(focusAnimationRef.current)
+    const startZoom = zoom
+    const startCenterMs = waveformCenterMs(startZoom)
+    const startedAt = performance.now()
+    const motionDuration = window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 360
+    const step = (now: number): void => {
+      const progress = motionDuration === 0 ? 1 : Math.min(1, (now - startedAt) / motionDuration)
+      const eased = 1 - ((1 - progress) ** 3)
+      const nextCenterMs = startCenterMs + (targetCenterMs - startCenterMs) * eased
+      const nextZoom = startZoom + (targetZoom - startZoom) * eased
+      animatedCenterRef.current = nextCenterMs
+      setZoom(nextZoom)
+      // Center movement must not depend on a zoom state update: adjacent lyric
+      // lines commonly share the automatic zoom cap, so React may bail out of
+      // rendering while the viewport still needs to travel horizontally.
+      const timelinePixels = scroll.clientWidth * nextZoom
+      scroll.scrollLeft = Math.max(0, (nextCenterMs / durationMs) * timelinePixels - scroll.clientWidth / 2)
+      if (progress < 1) focusAnimationRef.current = requestAnimationFrame(step)
+      else window.setTimeout(() => { animatedCenterRef.current = null }, 0)
+    }
+    focusAnimationRef.current = requestAnimationFrame(step)
+  }
+
+  useLayoutEffect(() => {
+    const scroll = scrollRef.current
+    const centerMs = animatedCenterRef.current
+    if (!scroll || centerMs === null || !durationMs) return
+    const timelinePixels = scroll.clientWidth * zoom
+    scroll.scrollLeft = Math.max(0, (centerMs / durationMs) * timelinePixels - scroll.clientWidth / 2)
+  }, [durationMs, zoom])
 
   const changeRate = (raw: number): void => {
     const next = Math.abs(raw - 1) <= 0.025 ? 1 : Math.max(0.1, Math.min(1.25, raw))
@@ -192,17 +248,19 @@ export const AudioTransport = forwardRef<TransportHandle, AudioTransportProps>(f
     if (graph) graph.gain.gain.setTargetAtTime(effectiveGain, graph.context.currentTime, 0.015)
   }, [effectiveGain])
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const canvas = canvasRef.current
     const scroll = scrollRef.current
     if (!canvas || !scroll) return
     const draw = (): void => {
-      const width = Math.max(scroll.clientWidth, Math.round(scroll.clientWidth * zoom))
+      const width = Math.max(1, scroll.clientWidth)
+      const timelineWidth = Math.max(width, width * zoom)
+      const scrollLeft = scroll.scrollLeft
       const height = Math.max(24, scroll.clientHeight)
       setWaveformWidth((current) => current === scroll.clientWidth ? current : scroll.clientWidth)
       const dpr = Math.min(devicePixelRatio || 1, 2)
-      canvas.width = width * dpr
-      canvas.height = height * dpr
+      canvas.width = Math.round(width * dpr)
+      canvas.height = Math.round(height * dpr)
       canvas.style.width = `${width}px`
       canvas.style.height = `${height}px`
       const context = canvas.getContext('2d')
@@ -219,23 +277,31 @@ export const AudioTransport = forwardRef<TransportHandle, AudioTransportProps>(f
         context.fillRect(0, mid, width, 1)
         return
       }
-      const barWidth = width / peaks.length
+      const barWidth = timelineWidth / peaks.length
       const progress = durationMs ? currentMs / durationMs : 0
-      peaks.forEach((peak, index) => {
-        const x = index * barWidth
+      const startIndex = Math.max(0, Math.floor((scrollLeft / timelineWidth) * peaks.length) - 1)
+      const endIndex = Math.min(peaks.length, Math.ceil(((scrollLeft + width) / timelineWidth) * peaks.length) + 1)
+      for (let index = startIndex; index < endIndex; index += 1) {
+        const peak = peaks[index]
+        const x = index * barWidth - scrollLeft
         const barHeight = Math.max(1, peak * (waveformHeight - 2))
         context.fillStyle = index / peaks.length <= progress ? '#36b8d8' : '#3b4349'
         context.fillRect(x, mid - barHeight / 2, Math.max(1, barWidth * 0.64), barHeight)
-      })
+      }
     }
     draw()
     const observer = new ResizeObserver(draw)
     observer.observe(scroll)
-    return () => observer.disconnect()
+    scroll.addEventListener('scroll', draw, { passive: true })
+    return () => {
+      observer.disconnect()
+      scroll.removeEventListener('scroll', draw)
+    }
   }, [currentMs, durationMs, peaks, zoom])
 
   useEffect(() => () => {
     cancelAnimationFrame(frameRef.current)
+    cancelAnimationFrame(focusAnimationRef.current)
     if (graphRef.current) void graphRef.current.context.close()
   }, [])
 
@@ -252,6 +318,28 @@ export const AudioTransport = forwardRef<TransportHandle, AudioTransportProps>(f
       window.removeEventListener('keydown', closeEscape)
     }
   }, [settingsOpen])
+
+  useEffect(() => {
+    const scroll = scrollRef.current
+    if (!scroll) return
+    if (wordTimingActive) {
+      if (!wordFocusRestoreRef.current) wordFocusRestoreRef.current = { zoom, centerMs: waveformCenterMs() }
+      return
+    }
+    const restore = wordFocusRestoreRef.current
+    if (!restore) return
+    wordFocusRestoreRef.current = null
+    animateWaveformView(restore.zoom, restore.centerMs)
+  }, [wordTimingActive])
+
+  useEffect(() => {
+    const scroll = scrollRef.current
+    if (!wordTimingActive || !scroll || !durationMs || selected?.startMs === null || selected?.startMs === undefined || loopEnd === null) return
+    const lineSpan = Math.max(500, loopEnd - selected.startMs)
+    const targetWindowMs = Math.max(MINIMUM_AUTOMATIC_WORD_WINDOW_MS, lineSpan * AUTOMATIC_WORD_CONTEXT_MULTIPLIER)
+    const targetZoom = Math.min(MAX_AUTOMATIC_WORD_ZOOM, Math.max(1, durationMs / targetWindowMs))
+    animateWaveformView(targetZoom, selected.startMs + lineSpan / 2)
+  }, [durationMs, loopEnd, selected?.id, selected?.startMs, wordTimingActive])
 
   const timelineWidth = `${zoom * 100}%`
   const markerLines = useMemo(() => lines.filter((line) => line.startMs !== null), [lines])
@@ -283,6 +371,7 @@ export const AudioTransport = forwardRef<TransportHandle, AudioTransportProps>(f
   const beginMarkerDrag = (event: React.PointerEvent, line: LyricLine): void => {
     event.stopPropagation()
     if (line.startMs === null) return
+    onTimingIntent()
     const markerElement = event.currentTarget
     const originX = event.clientX
     let moved = false
@@ -316,8 +405,44 @@ export const AudioTransport = forwardRef<TransportHandle, AudioTransportProps>(f
     window.addEventListener('pointerup', up)
   }
 
+  const visibleWordTime = (wordId: string, startMs: number): number => dragWord?.wordId === wordId ? dragWord.timeMs : startMs
+  const beginWordDrag = (event: React.PointerEvent, wordId: string, startMs: number): void => {
+    event.stopPropagation()
+    onTimingIntent()
+    const originX = event.clientX
+    let moved = false
+    draggingMarkerRef.current = wordId
+    onSelectWord(wordId)
+    seek(startMs)
+    setDragWord({ wordId, timeMs: startMs })
+    const move = (moveEvent: PointerEvent): void => {
+      if (!moved && Math.abs(moveEvent.clientX - originX) < 3) return
+      moved = true
+      const timeMs = timeFromPointer(moveEvent.clientX)
+      setDragWord({ wordId, timeMs })
+      seek(timeMs)
+    }
+    const finish = (finishEvent: PointerEvent): void => {
+      const timeMs = timeFromPointer(finishEvent.clientX)
+      if (moved && selected) {
+        onMoveWord(selected.id, wordId, timeMs)
+        suppressWordClickRef.current = wordId
+        window.setTimeout(() => { if (suppressWordClickRef.current === wordId) suppressWordClickRef.current = null }, 0)
+      }
+      else seek(startMs)
+      setDragWord(null)
+      draggingMarkerRef.current = null
+      window.removeEventListener('pointermove', move)
+      window.removeEventListener('pointerup', finish)
+      window.removeEventListener('pointercancel', finish)
+    }
+    window.addEventListener('pointermove', move)
+    window.addEventListener('pointerup', finish)
+    window.addEventListener('pointercancel', finish)
+  }
+
   return (
-    <section className="transport" aria-label="Audio transport" data-waveform-ready={peaks.length > 0}>
+    <section className={`transport ${wordTimingActive ? 'word-timing-active' : ''}`} aria-label="Audio transport" data-waveform-ready={peaks.length > 0} data-word-timing={wordTimingActive || undefined}>
       <audio
         ref={audioRef}
         src={sourceUrl ?? undefined}
@@ -404,6 +529,24 @@ export const AudioTransport = forwardRef<TransportHandle, AudioTransportProps>(f
                 aria-describedby={hoverMarkerId === line.id ? 'wave-marker-preview' : undefined}
               />
             })}
+            {wordTimingActive && selected?.startMs !== null && selected?.words.map((word, index) => {
+              const visibleTime = visibleWordTime(word.id, word.startMs)
+              return <button
+                key={word.id}
+                type="button"
+                className={`word-marker ${visibleTime <= currentMs ? 'passed' : ''} ${word.id === selectedWordId ? 'selected' : ''}`}
+                style={{ left: `${durationMs ? (visibleTime / durationMs) * 100 : 0}%` }}
+                onPointerDown={(event) => beginWordDrag(event, word.id, word.startMs)}
+                onClick={(event) => {
+                  event.stopPropagation()
+                  if (suppressWordClickRef.current === word.id) { suppressWordClickRef.current = null; return }
+                  onSelectWord(word.id)
+                  seek(visibleTime)
+                }}
+                aria-label={`Move word marker ${index + 1}: ${word.text.trim() || 'space'}`}
+                title={`${word.text.trim() || 'Space'} · ${formatTimestamp(visibleTime)}`}
+              />
+            })}
             <div className="wave-playhead" style={{ left: `${durationMs ? (currentMs / durationMs) * 100 : 0}%` }} />
           </div>
         </div>
@@ -415,7 +558,7 @@ export const AudioTransport = forwardRef<TransportHandle, AudioTransportProps>(f
         </div>
         <div className="transport-slider zoom-control">
           <span>Zoom <button type="button" onClick={() => setZoom(1)} aria-label="Reset waveform zoom" title="Reset waveform zoom">{zoomLabel}</button></span>
-          <span className="range-track"><input aria-label="Waveform zoom" type="range" min="1" max="8" step="0.25" value={zoom} onChange={(event) => setZoom(Number(event.target.value))} onDoubleClick={() => setZoom(1)} /></span>
+          <span className="range-track"><input aria-label="Waveform zoom" type="range" min="1" max={zoomMaximum} step="0.25" value={zoom} onChange={(event) => setZoom(Number(event.target.value))} onDoubleClick={() => setZoom(1)} /></span>
         </div>
         <div ref={settingsRef} className="audio-settings-anchor">
           <button type="button" className={`audio-settings-button ${settingsOpen ? 'active' : ''}`} onClick={() => setSettingsOpen((value) => !value)} aria-expanded={settingsOpen} aria-label="Audio settings"><SettingsIcon /><span>Audio</span></button>
@@ -435,7 +578,7 @@ export const AudioTransport = forwardRef<TransportHandle, AudioTransportProps>(f
             ><span><strong>Normalize loudness</strong><small>Measured {gainToDecibels(measuredGain) >= 0 ? '+' : ''}{gainToDecibels(measuredGain).toFixed(1)} dB</small></span><i /></button>
           </section>}
         </div>
-        <button className="stamp-button" type="button" disabled={!sourceUrl || !selectedLineId} onClick={() => onStamp(currentMs)} title="Stamp selected line at playhead (⌥ Enter)">Stamp <kbd>⌥↵</kbd></button>
+        <button className="stamp-button" type="button" disabled={!sourceUrl || !selectedLineId || (wordTimingActive && !selectedWordId)} onClick={() => onStamp(currentMs)} title={`${wordTimingActive ? 'Stamp selected word' : 'Stamp selected line'} at playhead (⌥ Enter)`}>{wordTimingActive ? 'Stamp word' : 'Stamp'} <kbd>⌥↵</kbd></button>
       </div>
     </section>
   )

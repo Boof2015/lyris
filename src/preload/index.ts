@@ -1,8 +1,11 @@
-import { contextBridge, ipcRenderer } from 'electron'
+import { contextBridge, ipcRenderer, webUtils } from 'electron'
 import type { LyrisApi } from '../types/api'
 
 const api: LyrisApi = {
   platform: process.platform,
+  files: {
+    pathForFile: (file) => webUtils.getPathForFile(file),
+  },
   project: {
     open: () => ipcRenderer.invoke('project:open'),
     openPath: (path) => ipcRenderer.invoke('project:open-path', path),
@@ -21,6 +24,7 @@ const api: LyrisApi = {
   },
   audio: {
     select: (projectPath) => ipcRenderer.invoke('audio:select', projectPath),
+    openPath: (path, projectPath) => ipcRenderer.invoke('audio:open-path', path, projectPath),
     relocate: (reference, projectPath) => ipcRenderer.invoke('audio:relocate', reference, projectPath),
   },
   lyrics: {

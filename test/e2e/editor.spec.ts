@@ -23,7 +23,7 @@ function silentWav(durationSeconds = 4, sampleRate = 8_000): Buffer {
   return output
 }
 
-async function fixture(): Promise<{ directory: string; projectPath: string }> {
+async function fixture(): Promise<{ directory: string; audioPath: string; projectPath: string }> {
   const directory = await mkdtemp(join(tmpdir(), 'lyris-e2e-'))
   const audioPath = join(directory, 'example.wav')
   const projectPath = join(directory, 'example.lyris')
@@ -40,12 +40,15 @@ async function fixture(): Promise<{ directory: string; projectPath: string }> {
       metadata: { title: 'Example Song', artist: 'Lyris Test', album: '', primaryLanguage: 'en', languages: ['en', 'es'], durationMs: 4000, extra: {} },
       lines: [
         { id: 'line_one', kind: 'lyric', sectionBreakBefore: false, text: 'Hello world', startMs: 1000, endMs: null, voice: null, translations: [{ id: 'translation_one', language: 'es', text: 'Hola mundo' }], furigana: [], words: [], reviewState: 'unreviewed' },
-        { id: 'line_two', kind: 'lyric', sectionBreakBefore: false, text: 'Second line', startMs: 2000, endMs: null, voice: null, translations: [], furigana: [], words: [], reviewState: 'needs-review' },
+        { id: 'line_two', kind: 'lyric', sectionBreakBefore: false, text: 'Second line', startMs: 2000, endMs: null, voice: null, translations: [], furigana: [], words: [
+          { id: 'word_second', text: 'Second ', startMs: 2000, endMs: 2500, furigana: [] },
+          { id: 'word_line', text: 'line', startMs: 2500, endMs: null, furigana: [] },
+        ], reviewState: 'needs-review' },
       ],
     },
     exportPreferences: { format: 'xlrc', includeMetadata: true },
   }, null, 2)}\n`)
-  return { directory, projectPath }
+  return { directory, audioPath, projectPath }
 }
 
 async function realFixture(): Promise<{ directory: string; projectPath: string }> {
@@ -102,13 +105,49 @@ test('presents a focused, responsive project launcher', async () => {
 })
 
 test('opens, edits, times, autosaves, reopens, and prepares export', async () => {
-  const { projectPath } = await fixture()
+  const { directory, audioPath, projectPath } = await fixture()
+  const droppedLyricsPath = join(directory, 'dropped.lrc')
+  await writeFile(droppedLyricsPath, '[00:00.50]Dropped lyric\n')
   let app = await launch(projectPath)
   let page = await app.firstWindow()
   await page.getByRole('button', { name: 'Edit track details' }).click()
   await expect(page.getByPlaceholder('Untitled track')).toHaveValue('Example Song')
   await page.screenshot({ path: join(tmpdir(), 'lyris-metadata-popover.png'), fullPage: true })
   await page.getByRole('button', { name: 'Close track details' }).click()
+  await expect(page.getByRole('textbox', { name: 'Lyric line 1', exact: true })).toHaveValue('Hello world')
+
+  await page.getByRole('button', { name: 'Go to Lyris home' }).click()
+  await expect(page.getByRole('heading', { name: 'Start a lyric project.' })).toBeVisible()
+  await page.getByRole('button', { name: 'Open Example Song' }).click()
+  await expect(page.getByRole('textbox', { name: 'Lyric line 1', exact: true })).toHaveValue('Hello world')
+
+  await page.evaluate(() => {
+    const input = document.createElement('input')
+    input.id = 'e2e-drop-files'
+    input.type = 'file'
+    input.multiple = true
+    input.hidden = true
+    document.body.append(input)
+  })
+  await page.locator('#e2e-drop-files').setInputFiles([audioPath, droppedLyricsPath])
+  await page.evaluate(() => {
+    const transfer = new DataTransfer()
+    const input = document.querySelector<HTMLInputElement>('#e2e-drop-files')!
+    Array.from(input.files ?? []).forEach((file) => transfer.items.add(file))
+    ;(window as Window & { __lyrisTestDrop?: DataTransfer }).__lyrisTestDrop = transfer
+    document.querySelector('.workspace')!.dispatchEvent(new DragEvent('dragenter', { bubbles: true, cancelable: true, dataTransfer: transfer }))
+  })
+  await expect(page.getByRole('status', { name: 'Drop files to import' })).toBeVisible()
+  await page.screenshot({ path: join(tmpdir(), 'lyris-drop-import.png'), fullPage: true })
+  await page.evaluate(() => {
+    const state = window as Window & { __lyrisTestDrop?: DataTransfer }
+    document.querySelector('.workspace')!.dispatchEvent(new DragEvent('drop', { bubbles: true, cancelable: true, dataTransfer: state.__lyrisTestDrop }))
+    delete state.__lyrisTestDrop
+  })
+  await expect(page.getByRole('status', { name: 'Drop files to import' })).toBeHidden()
+  await expect(page.getByRole('textbox', { name: 'Lyric line 1', exact: true })).toHaveValue('Dropped lyric')
+  await expect(page.locator('.toast.success')).toContainText('Attached example.wav. Imported dropped.lrc.')
+  await page.keyboard.press('Meta+z')
   await expect(page.getByRole('textbox', { name: 'Lyric line 1', exact: true })).toHaveValue('Hello world')
 
   const separator = page.getByRole('separator', { name: 'Resize editor and preview' })
@@ -228,6 +267,85 @@ test('opens, edits, times, autosaves, reopens, and prepares export', async () =>
   await page.getByRole('button', { name: '+100' }).click()
   await expect(page.getByLabel('Start time for lyric line 2')).toHaveValue('00:02.100')
 
+  await page.getByRole('button', { name: 'Edit 2 words' }).click()
+  const wordTiming = page.getByLabel('Selected word timing')
+  await expect(wordTiming).toBeVisible()
+  await expect(page.locator('[data-line-id="line_two"]')).toHaveClass(/word-timing-open/u)
+  await expect(page.locator('[data-line-id="line_two"]')).toContainText('Selected')
+  await expect(page.locator('.timeline-dock > .timing-strip')).toHaveCount(0)
+  await expect(page.locator('.transport')).toHaveAttribute('data-word-timing', 'true')
+  await expect(page.locator('.word-marker')).toHaveCount(2)
+  await expect(page.locator('.word-source-unit')).toHaveCount(2)
+  await page.getByRole('button', { name: 'Select word line' }).click()
+  const wordStart = wordTiming.getByRole('textbox', { name: 'Start time for word line', exact: true })
+  await expect(wordStart).toHaveValue('00:02.600')
+  await wordTiming.getByRole('button', { name: '+100' }).click()
+  await expect(wordStart).toHaveValue('00:02.700')
+  const selectedWordUnit = page.locator('.word-source-unit.selected')
+  const selectedTimeBox = await selectedWordUnit.locator('.word-source-time').boundingBox()
+  const selectedTextBox = await selectedWordUnit.locator('.word-source-text').boundingBox()
+  const selectedRowBox = await page.locator('[data-line-id="line_two"]').boundingBox()
+  const transportBox = await page.locator('.transport').boundingBox()
+  expect(selectedTimeBox).not.toBeNull()
+  expect(selectedTextBox).not.toBeNull()
+  expect(selectedRowBox).not.toBeNull()
+  expect(transportBox).not.toBeNull()
+  expect(selectedTimeBox!.y + selectedTimeBox!.height).toBeLessThanOrEqual(selectedTextBox!.y)
+  expect(selectedTimeBox!.height).toBeGreaterThanOrEqual(20)
+  expect(selectedTextBox!.height).toBeGreaterThanOrEqual(28)
+  expect(selectedRowBox!.y + selectedRowBox!.height).toBeLessThan(transportBox!.y)
+  await page.screenshot({ path: join(tmpdir(), 'lyris-word-timing.png'), fullPage: true })
+  const wordTimingViewport = await page.evaluate(() => ({ width: innerWidth, height: innerHeight }))
+  await app.evaluate(({ BrowserWindow }) => BrowserWindow.getAllWindows()[0]?.setContentSize(940, 640))
+  await expect.poll(() => page.evaluate(() => innerWidth)).toBe(940)
+  const wordTimingMinimum = await page.evaluate(() => ({ width: innerWidth, height: innerHeight, scrollWidth: document.body.scrollWidth, scrollHeight: document.body.scrollHeight }))
+  expect(wordTimingMinimum.scrollWidth).toBeLessThanOrEqual(wordTimingMinimum.width)
+  expect(wordTimingMinimum.scrollHeight).toBeLessThanOrEqual(wordTimingMinimum.height)
+  await page.screenshot({ path: join(tmpdir(), 'lyris-word-timing-minimum.png'), fullPage: true })
+  await app.evaluate(({ BrowserWindow }, size) => BrowserWindow.getAllWindows()[0]?.setContentSize(size.width, size.height), wordTimingViewport)
+  await expect.poll(() => page.evaluate(() => innerWidth)).toBe(wordTimingViewport.width)
+
+  await page.getByRole('button', { name: 'Done' }).click()
+  await expect(page.locator('.word-marker')).toHaveCount(0)
+  await expect(zoom).toHaveValue('2')
+
+  await page.getByRole('textbox', { name: 'Lyric line 1', exact: true }).click()
+  await page.getByRole('button', { name: 'Time words' }).click()
+  const segmentInput = page.getByRole('textbox', { name: 'Word segments' })
+  await expect(segmentInput).toHaveValue('Hello edited')
+  await expect(page.locator('.word-marker')).toHaveCount(0)
+  await segmentInput.fill('Hello |edited')
+  await page.getByRole('button', { name: 'Start timing 2 parts' }).click()
+  await expect(page.locator('.word-marker')).toHaveCount(2)
+  await expect(page.getByRole('button', { name: 'Select word Hello' })).toBeVisible()
+  const wordFollow = page.getByLabel('Selected word timing')
+  const editorPane = page.locator('.editor-pane')
+  await expect(editorPane).toHaveAttribute('data-following-playback', 'false')
+  await expect(wordFollow).toHaveAttribute('data-follow-state', 'paused')
+  await page.getByRole('button', { name: 'Resume editor playback follow' }).click()
+  await expect(wordFollow).toHaveAttribute('data-follow-state', 'following')
+  await expect(editorPane).toHaveAttribute('data-following-playback', 'true')
+  await page.locator('audio').evaluate((audio) => {
+    ;(audio as HTMLAudioElement).currentTime = 2.8
+    audio.dispatchEvent(new Event('seeked', { bubbles: true }))
+  })
+  await expect(page.locator('[data-line-id="line_two"]')).toHaveClass(/word-timing-open/u)
+  await expect(page.locator('.word-source-unit.selected .word-source-text')).toHaveText('line')
+  await page.getByRole('textbox', { name: 'Start time for word line', exact: true }).focus()
+  await expect(wordFollow).toHaveAttribute('data-follow-state', 'paused')
+  await expect(editorPane).toHaveAttribute('data-following-playback', 'false')
+  await page.locator('audio').evaluate((audio) => {
+    ;(audio as HTMLAudioElement).currentTime = 1.2
+    audio.dispatchEvent(new Event('seeked', { bubbles: true }))
+  })
+  await expect(page.locator('[data-line-id="line_two"]')).toHaveClass(/word-timing-open/u)
+  await page.getByRole('button', { name: 'Resume editor playback follow' }).click()
+  await expect(wordFollow).toHaveAttribute('data-follow-state', 'following')
+  await expect(editorPane).toHaveAttribute('data-following-playback', 'true')
+  await expect(page.locator('[data-line-id="line_one"]')).toHaveClass(/word-timing-open/u)
+  await page.getByRole('button', { name: 'Done' }).click()
+  await expect(editorPane).toHaveAttribute('data-following-playback', 'true')
+
   await page.getByRole('button', { name: 'Source' }).click()
   await expect(page.locator('.source-line.active')).toHaveCount(1)
   await expect(page.locator('.source-token.time').first()).toHaveCSS('color', 'rgb(56, 189, 248)')
@@ -249,10 +367,12 @@ test('opens, edits, times, autosaves, reopens, and prepares export', async () =>
   await page.screenshot({ path: join(tmpdir(), 'lyris-editor-minimum.png'), fullPage: true })
 
   await page.waitForTimeout(1200)
-  const saved = JSON.parse(await readFile(projectPath, 'utf8')) as { document: { lines: Array<{ text: string; startMs: number; translations: Array<{ text: string }> }> } }
+  const saved = JSON.parse(await readFile(projectPath, 'utf8')) as { document: { lines: Array<{ text: string; startMs: number; translations: Array<{ text: string }>; words: Array<{ startMs: number }> }> } }
   expect(saved.document.lines.map((line) => line.text)).toContain('Hello edited')
   expect(saved.document.lines[0].startMs).toBe(1100)
+  expect(saved.document.lines[0].words.map((word) => word.startMs)).toEqual([1100, 1100])
   expect(saved.document.lines[1].startMs).toBe(2100)
+  expect(saved.document.lines[1].words[1].startMs).toBe(2700)
   expect(saved.document.lines[0].translations[0].text).toBe('Hola editado')
 
   await app.close()
@@ -271,7 +391,7 @@ test('opens, edits, times, autosaves, reopens, and prepares export', async () =>
   await page.waitForTimeout(250)
   await page.screenshot({ path: join(tmpdir(), 'lyris-export-dialog.png'), fullPage: true })
   await page.getByRole('button', { name: /^LRC/u }).click()
-  await expect(page.getByText('Timed rows')).toBeVisible()
+  await expect(page.getByText('Timed rows', { exact: true })).toBeVisible()
   await page.getByRole('button', { name: 'Cancel' }).click()
   await app.close()
 })
@@ -306,6 +426,8 @@ test('renders the real XLRC project cleanly at desktop and minimum sizes', async
 
   const editorPane = page.locator('.editor-pane')
   await expect(editorPane).toHaveAttribute('data-following-playback', 'true')
+  await page.getByRole('button', { name: 'Lines', exact: true }).click()
+  await expect(editorPane).toHaveAttribute('data-following-playback', 'true')
   await page.locator('.lyric-row.active-playback').click()
   await expect(editorPane).toHaveAttribute('data-following-playback', 'false')
   const editorScrollBeforeSeek = await page.locator('.line-list').evaluate((list) => list.scrollTop)
@@ -323,6 +445,29 @@ test('renders the real XLRC project cleanly at desktop and minimum sizes', async
     const viewport = row.parentElement!.getBoundingClientRect()
     return bounds.top >= viewport.top && bounds.bottom <= viewport.bottom
   })).toBe(true)
+
+  await page.getByRole('textbox', { name: 'Lyric line 4', exact: true }).click()
+  await page.getByRole('button', { name: 'Time words' }).click()
+  const zoom = page.getByRole('slider', { name: 'Waveform zoom', exact: true })
+  await expect.poll(async () => Number(await zoom.inputValue())).toBeGreaterThan(25)
+  const waveformScroll = page.locator('.waveform-scroll')
+  const canvasDimensions = await page.locator('.waveform-canvas').evaluate((canvas) => ({
+    bitmapWidth: (canvas as HTMLCanvasElement).width,
+    viewportWidth: canvas.parentElement!.parentElement!.clientWidth,
+  }))
+  expect(canvasDimensions.bitmapWidth).toBeLessThanOrEqual(canvasDimensions.viewportWidth * 2)
+  await page.screenshot({ path: join(tmpdir(), 'lyris-real-word-timing.png'), fullPage: true })
+  const initialWordFocus = await waveformScroll.evaluate((scroll) => scroll.scrollLeft)
+  await page.getByRole('textbox', { name: 'Lyric line 21', exact: true }).click()
+  await expect(page.locator('[data-line-id]').nth(20)).toHaveClass(/word-timing-open/u)
+  await expect.poll(async () => Number(await zoom.inputValue())).toBeGreaterThan(25)
+  await page.waitForTimeout(120)
+  const transitioningWordFocus = await waveformScroll.evaluate((scroll) => scroll.scrollLeft)
+  await page.waitForTimeout(350)
+  const finalWordFocus = await waveformScroll.evaluate((scroll) => scroll.scrollLeft)
+  expect(transitioningWordFocus).toBeGreaterThan(initialWordFocus)
+  expect(finalWordFocus).toBeGreaterThan(transitioningWordFocus)
+  await page.getByRole('button', { name: 'Done' }).click()
 
   await app.evaluate(({ BrowserWindow }) => BrowserWindow.getAllWindows()[0]?.setContentSize(940, 640))
   await expect.poll(() => page.evaluate(() => innerWidth)).toBe(940)

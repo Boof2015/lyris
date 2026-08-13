@@ -12,6 +12,8 @@ import {
 } from './Icons'
 
 interface EditorWorkspaceProps {
+  onHome: () => void
+  onDropFiles: (files: File[]) => void
   onOpenAudio: () => void
   onImportLyrics: () => void
   onSave: (saveAs?: boolean) => void
@@ -87,7 +89,7 @@ function MetadataPopover({ metadata, audioName, projectPath, onCommit, onClose }
   </section>
 }
 
-function TimestampInput({ value, onCommit, label }: { value: number | null; onCommit: (value: number | null) => void; label: string }): React.ReactElement {
+function TimestampInput({ value, onCommit, label, onEditorIntent }: { value: number | null; onCommit: (value: number | null) => void; label: string; onEditorIntent: () => void }): React.ReactElement {
   const [draft, setDraft] = useState(value === null ? '' : formatTimestamp(value))
   const [invalid, setInvalid] = useState(false)
   useEffect(() => { setDraft(value === null ? '' : formatTimestamp(value)); setInvalid(false) }, [value])
@@ -99,7 +101,7 @@ function TimestampInput({ value, onCommit, label }: { value: number | null; onCo
     setDraft(formatTimestamp(parsed))
     onCommit(parsed)
   }
-  return <label className={`timestamp-input ${invalid ? 'invalid' : ''}`}><span>{label}</span><input value={draft} placeholder="00:00.000" onChange={(event) => setDraft(event.target.value)} onBlur={commit} onKeyDown={(event) => { if (event.key === 'Enter') event.currentTarget.blur() }} /></label>
+  return <label className={`timestamp-input ${invalid ? 'invalid' : ''}`}><span>{label}</span><input value={draft} placeholder="00:00.000" onFocus={onEditorIntent} onChange={(event) => setDraft(event.target.value)} onBlur={commit} onKeyDown={(event) => { if (event.key === 'Enter') event.currentTarget.blur() }} /></label>
 }
 
 function renderRuby(text: string, furigana: LyricFurigana[]): React.ReactNode {
@@ -265,7 +267,18 @@ function TranslationSourceLine({ translation, lineNumber, onSelect, onUpdate, on
 
 type DropPosition = 'before' | 'after' | null
 
-function LineRow({ line, index, selected, active, issueCount, languages, dragging, dropPosition, onDragStart, onDragOver, onDrop, onDragEnd, onPreviewTime, onNotice }: {
+interface InlineWordTimingProps {
+  selectedWordId: string | null
+  currentMs: number
+  looping: boolean
+  following: boolean
+  onLoop: () => void
+  onFollow: () => void
+  onDone: () => void
+  onSelectWord: (wordId: string) => void
+}
+
+function LineRow({ line, index, selected, active, issueCount, languages, dragging, dropPosition, wordTiming, onDragStart, onDragOver, onDrop, onDragEnd, onPreviewTime, onEditorIntent, onNotice }: {
   line: LyricLine
   index: number
   selected: boolean
@@ -274,11 +287,13 @@ function LineRow({ line, index, selected, active, issueCount, languages, draggin
   languages: string[]
   dragging: boolean
   dropPosition: DropPosition
+  wordTiming: InlineWordTimingProps | null
   onDragStart: () => void
   onDragOver: (position: Exclude<DropPosition, null>) => void
   onDrop: () => void
   onDragEnd: () => void
   onPreviewTime: (lineId: string, timeMs: number | null) => void
+  onEditorIntent: () => void
   onNotice: EditorWorkspaceProps['onNotice']
 }): React.ReactElement {
   const selectLine = useEditorStore((state) => state.selectLine)
@@ -320,7 +335,9 @@ function LineRow({ line, index, selected, active, issueCount, languages, draggin
   const runMenuAction = (action: () => void): void => { setMenuOpen(false); action() }
 
   return <div
-    className={`lyric-row ${selected ? 'selected' : ''} ${active ? 'active-playback' : ''} ${line.sectionBreakBefore ? 'section-break' : ''} ${dragging ? 'dragging' : ''} ${dropPosition ? `drop-${dropPosition}` : ''}`}
+    className={`lyric-row ${selected ? 'selected' : ''} ${active ? 'active-playback' : ''} ${wordTiming ? 'word-timing-open' : ''} ${line.sectionBreakBefore ? 'section-break' : ''} ${dragging ? 'dragging' : ''} ${dropPosition ? `drop-${dropPosition}` : ''}`}
+    onPointerDownCapture={(event) => { if (!(event.target instanceof Element && event.target.closest('[data-preserve-follow]'))) onEditorIntent() }}
+    onFocusCapture={(event) => { if (!(event.target instanceof Element && event.target.closest('[data-preserve-follow]'))) onEditorIntent() }}
     onClick={() => selectLine(line.id)}
     onDragOver={(event) => {
       if (dragging) return
@@ -350,7 +367,7 @@ function LineRow({ line, index, selected, active, issueCount, languages, draggin
         onPreview={(timeMs) => onPreviewTime(line.id, timeMs)}
       /><i>]</i></span>
     <div className="line-copy">
-      <textarea
+      {wordTiming ? <InlineWordTimingEditor line={line} {...wordTiming} onEditorIntent={onEditorIntent} /> : <textarea
         rows={1}
         value={draft}
         aria-label={`Lyric line ${index + 1}`}
@@ -372,9 +389,9 @@ function LineRow({ line, index, selected, active, issueCount, languages, draggin
             event.currentTarget.blur()
           }
         }}
-      />
+      />}
     </div>
-    {(line.voice || line.translations.length > 0 || line.words.length > 0) && <div className="line-supporting">
+    {!wordTiming && (line.voice || line.translations.length > 0 || line.words.length > 0) && <div className="line-supporting">
       {(line.voice || line.words.length > 0) && <div className="line-annotations">
         {line.voice && <span className="line-chip">[voice:{line.voice}]</span>}
         {line.words.length > 0 && <span className="line-chip">[word-timed]</span>}
@@ -409,25 +426,145 @@ function LineRow({ line, index, selected, active, issueCount, languages, draggin
   </div>
 }
 
-function TimingStrip({ line, index, looping, onLoop, onReveal, onEditorIntent }: { line: LyricLine; index: number; looping: boolean; onLoop: () => void; onReveal: () => void; onEditorIntent: () => void }): React.ReactElement {
+function TimingStrip({ line, index, looping, onLoop, onReveal, onEditorIntent, onStartWordTiming }: { line: LyricLine; index: number; looping: boolean; onLoop: () => void; onReveal: () => void; onEditorIntent: () => void; onStartWordTiming: () => void }): React.ReactElement {
   const updateLine = useEditorStore((state) => state.updateLine)
   const nudgeSelected = useEditorStore((state) => state.nudgeSelected)
-  return <div className="timing-strip" aria-label="Selected line timing" onPointerDownCapture={onEditorIntent} onFocusCapture={onEditorIntent}>
-    <button type="button" className="timing-heading" onClick={onReveal} title="Reveal selected line"><span>Line {String(index + 1).padStart(2, '0')}</span><strong>{line.text || 'Instrumental break'}</strong></button>
+  return <div className="timing-strip" aria-label="Selected line timing">
+    <button type="button" className="timing-heading" onClick={() => { onEditorIntent(); onReveal() }} title="Reveal selected line"><span>Line {String(index + 1).padStart(2, '0')}</span><strong>{line.text || 'Instrumental break'}</strong></button>
     <div className="timing-controls">
-      <TimestampInput label="End" value={line.endMs} onCommit={(endMs) => updateLine(line.id, { endMs }, 'Set line end')} />
-      <div className="nudge-group"><span>Nudge</span><div><button type="button" onClick={() => nudgeSelected(-100)}>−100</button><button type="button" onClick={() => nudgeSelected(-10)}>−10</button><button type="button" onClick={() => nudgeSelected(10)}>+10</button><button type="button" onClick={() => nudgeSelected(100)}>+100</button></div></div>
+      <TimestampInput label="End" value={line.endMs} onEditorIntent={onEditorIntent} onCommit={(endMs) => updateLine(line.id, { endMs }, 'Set line end')} />
+      <div className="nudge-group"><span>Nudge</span><div><button type="button" onClick={() => { onEditorIntent(); nudgeSelected(-100) }}>−100</button><button type="button" onClick={() => { onEditorIntent(); nudgeSelected(-10) }}>−10</button><button type="button" onClick={() => { onEditorIntent(); nudgeSelected(10) }}>+10</button><button type="button" onClick={() => { onEditorIntent(); nudgeSelected(100) }}>+100</button></div></div>
       <button className={`strip-button ${looping ? 'active' : ''}`} type="button" onClick={onLoop}>Loop</button>
-      <label className="review-select"><span>Review</span><select value={line.reviewState} onChange={(event) => updateLine(line.id, { reviewState: event.target.value as LyricLine['reviewState'] }, 'Set review state')}><option value="unreviewed">Unreviewed</option><option value="needs-review">Needs review</option><option value="reviewed">Reviewed</option></select></label>
+      <button className="strip-button word-timing-entry" type="button" onClick={onStartWordTiming} disabled={line.kind !== 'lyric' || !line.text || line.startMs === null} title={line.startMs === null ? 'Set the line start before timing words' : 'Focus this line and edit its word timing'}>{line.words.length > 0 ? `Edit ${line.words.length} word${line.words.length === 1 ? '' : 's'}` : 'Time words'}</button>
+      <label className="review-select"><span>Review</span><select value={line.reviewState} onFocus={onEditorIntent} onChange={(event) => updateLine(line.id, { reviewState: event.target.value as LyricLine['reviewState'] }, 'Set review state')}><option value="unreviewed">Unreviewed</option><option value="needs-review">Needs review</option><option value="reviewed">Reviewed</option></select></label>
       {line.confidence !== undefined && <div className="confidence"><span>Confidence</span><strong>{Math.round(line.confidence * 100)}%</strong></div>}
     </div>
   </div>
 }
 
-function SourceEditor({ onNotice, activeStartMs, follow }: {
+function WordTimestampInput({ word, selected, pending, onSelect, onCommit, onEditorIntent }: {
+  word: LyricLine['words'][number]
+  selected: boolean
+  pending: boolean
+  onSelect: () => void
+  onCommit: (startMs: number) => void
+  onEditorIntent: () => void
+}): React.ReactElement {
+  const value = formatTimestamp(word.startMs)
+  const [draft, setDraft] = useState(value)
+  const [invalid, setInvalid] = useState(false)
+  useEffect(() => { setDraft(value); setInvalid(false) }, [value])
+  const commit = (): void => {
+    const parsed = parseTimestamp(draft)
+    if (parsed === null) { setInvalid(true); return }
+    setInvalid(false)
+    setDraft(formatTimestamp(parsed))
+    if (parsed !== word.startMs) onCommit(parsed)
+  }
+  const label = word.text.trim() || 'space'
+  return <input
+    className={`word-source-time ${selected ? 'selected' : ''} ${pending ? 'pending' : ''} ${invalid ? 'invalid' : ''}`}
+    value={draft}
+    aria-label={`Start time for word ${label}`}
+    aria-invalid={invalid || undefined}
+    spellCheck={false}
+    onFocus={(event) => { onEditorIntent(); onSelect(); event.currentTarget.select() }}
+    onChange={(event) => { setDraft(event.target.value); setInvalid(false) }}
+    onBlur={commit}
+    onKeyDown={(event) => {
+      if (event.key === 'Enter') event.currentTarget.blur()
+      if (event.key === 'Escape') { setDraft(value); setInvalid(false); event.currentTarget.blur() }
+    }}
+  />
+}
+
+function InlineWordTimingEditor({ line, selectedWordId, currentMs, looping, following, onLoop, onFollow, onDone, onSelectWord, onEditorIntent }: {
+  line: LyricLine
+  selectedWordId: string | null
+  currentMs: number
+  looping: boolean
+  following: boolean
+  onLoop: () => void
+  onFollow: () => void
+  onDone: () => void
+  onSelectWord: (wordId: string) => void
+  onEditorIntent: () => void
+}): React.ReactElement {
+  const setWordSegments = useEditorStore((state) => state.setWordSegments)
+  const updateWord = useEditorStore((state) => state.updateWord)
+  const sourceRef = useRef<HTMLDivElement>(null)
+  const [segmentDraft, setSegmentDraft] = useState(line.text)
+  useEffect(() => setSegmentDraft(line.text), [line.id, line.text])
+  const selectedWord = line.words.find((word) => word.id === selectedWordId) ?? line.words[0] ?? null
+  const segments = segmentDraft.split('|')
+  const validSegments = segments.length > 0 && segments.every((segment) => segment.length > 0) && segments.join('') === line.text
+  const nudgeWord = (deltaMs: number): void => {
+    if (selectedWord) updateWord(line.id, selectedWord.id, { startMs: Math.max(0, selectedWord.startMs + deltaMs) }, 'Nudge word timing')
+  }
+  useEffect(() => {
+    if (!following || !selectedWordId || !sourceRef.current) return
+    const source = sourceRef.current
+    const unit = Array.from(source.querySelectorAll<HTMLElement>('[data-word-id]')).find((candidate) => candidate.dataset.wordId === selectedWordId)
+    if (!unit) return
+    const sourceBounds = source.getBoundingClientRect()
+    const unitBounds = unit.getBoundingClientRect()
+    const left = source.scrollLeft + unitBounds.left - sourceBounds.left - (source.clientWidth - unitBounds.width) / 2
+    const top = source.scrollTop + unitBounds.top - sourceBounds.top - (source.clientHeight - unitBounds.height) / 2
+    source.scrollTo({ left: Math.max(0, left), top: Math.max(0, top), behavior: playbackScrollBehavior() })
+  }, [following, line.id, selectedWordId])
+  const followLabel = following ? 'Following' : 'Resume follow'
+  const followButton = <button
+    className={`strip-button word-follow-button ${following ? 'following' : 'paused'}`}
+    type="button"
+    data-preserve-follow
+    aria-label={following ? 'Pause editor playback follow' : 'Resume editor playback follow'}
+    aria-pressed={following}
+    onClick={onFollow}
+    title={following ? 'Keep the current line and word selected' : 'Follow the current playback line and word'}
+  ><i />{followLabel}</button>
+  return <section className="inline-word-timing-editor" aria-label="Selected word timing" data-follow-state={following ? 'following' : 'paused'}>
+    {line.words.length === 0 ? <div className="word-segment-setup">
+      <label><span>Lyric parts</span><input value={segmentDraft} aria-label="Word segments" onFocus={onEditorIntent} onChange={(event) => setSegmentDraft(event.target.value)} onKeyDown={(event) => {
+        if (event.key === 'Enter' && validSegments) setWordSegments(line.id, segments)
+      }} /></label>
+      <small>Place <b>|</b> before each part that should receive its own timestamp.</small>
+      <div className="word-segment-actions">{followButton}<button type="button" className="strip-button active" disabled={!validSegments} onClick={() => { onEditorIntent(); setWordSegments(line.id, segments) }}>Start timing {segments.length} part{segments.length === 1 ? '' : 's'}</button></div>
+    </div> : <>
+      <div ref={sourceRef} className="word-source-line" aria-label="Timed lyric source">{line.words.map((word, wordIndex) => {
+        const previousStart = line.words[wordIndex - 1]?.startMs
+        const nextStart = line.words[wordIndex + 1]?.startMs ?? Number.POSITIVE_INFINITY
+        const playing = currentMs >= word.startMs && currentMs < nextStart
+        const selected = word.id === selectedWord?.id
+        const pending = previousStart !== undefined && word.startMs <= previousStart
+        return <span className={`word-source-unit ${selected ? 'selected' : ''} ${playing ? 'playing' : ''} ${pending ? 'pending' : ''}`} data-word-id={word.id} key={word.id}>
+          <WordTimestampInput
+            word={word}
+            selected={selected}
+            pending={pending}
+            onSelect={() => onSelectWord(word.id)}
+            onCommit={(startMs) => updateWord(line.id, word.id, { startMs }, 'Set word timing')}
+            onEditorIntent={onEditorIntent}
+          />
+          <button type="button" className="word-source-text" onClick={() => { onEditorIntent(); onSelectWord(word.id) }} aria-label={`Select word ${word.text.trim() || wordIndex + 1}`}>{renderRuby(word.text.trim() || 'space', word.furigana)}</button>
+        </span>
+      })}</div>
+      {selectedWord && <div className="word-timing-controls">
+        <span className="word-selection-label"><small>Selected</small><strong>{selectedWord.text.trim() || 'space'}</strong></span>
+        <div className="nudge-group"><span>Nudge</span><div><button type="button" onClick={() => { onEditorIntent(); nudgeWord(-100) }}>−100</button><button type="button" onClick={() => { onEditorIntent(); nudgeWord(-10) }}>−10</button><button type="button" onClick={() => { onEditorIntent(); nudgeWord(10) }}>+10</button><button type="button" onClick={() => { onEditorIntent(); nudgeWord(100) }}>+100</button></div></div>
+        <button className={`strip-button ${looping ? 'active' : ''}`} type="button" data-preserve-follow onClick={onLoop}>Loop line</button>
+        {followButton}
+        <button type="button" className="word-timing-done" data-preserve-follow onClick={onDone}>Done</button>
+      </div>}
+    </>}
+    {line.words.length === 0 && <button type="button" className="word-timing-done" data-preserve-follow onClick={onDone}>Done</button>}
+  </section>
+}
+
+function SourceEditor({ onNotice, activeStartMs, follow, onEditorIntent }: {
   onNotice: EditorWorkspaceProps['onNotice']
   activeStartMs: number | null
   follow: boolean
+  onEditorIntent: () => void
 }): React.ReactElement {
   const sourceText = useEditorStore((state) => state.sourceText)
   const applySource = useEditorStore((state) => state.applySource)
@@ -460,7 +597,7 @@ function SourceEditor({ onNotice, activeStartMs, follow }: {
   const reset = (): void => { const next = sourceText(); setBaseline(next); setDraft(next); setError(null) }
   return <section className="source-editor">
     <div className="source-note"><div><strong>Canonical XLRC source</strong><span>{untimedCount ? `${untimedCount} untimed row${untimedCount === 1 ? ' is' : 's are'} omitted; time every row before applying source.` : 'Applying source replaces the structured document as one undoable change. Formatting may be normalized.'}</span></div><span className={draft === baseline ? 'source-clean' : 'source-dirty'}>{untimedCount ? 'READ ONLY' : draft === baseline ? 'IN SYNC' : 'UNAPPLIED'}</span></div>
-    <div className="source-code">
+    <div className="source-code" onPointerDownCapture={onEditorIntent} onFocusCapture={onEditorIntent} onWheelCapture={onEditorIntent} onTouchMoveCapture={onEditorIntent}>
       <div ref={gutterRef} className="source-gutter" aria-hidden="true">{lines.map((_, index) => <span key={index} className={`${activeLineIndexes.has(index) ? 'active' : ''} ${caretLine === index ? 'current' : ''}`}>{index + 1}</span>)}</div>
       <div className="source-input">
         <pre ref={highlightRef} className="source-highlight" aria-hidden="true">{lines.map((line, index) => <span key={index} className={`source-line ${activeLineIndexes.has(index) ? 'active' : ''} ${caretLine === index ? 'current' : ''}`}>{tokenizeSourceLine(line).map((token, tokenIndex) => <span key={`${tokenIndex}-${token.kind}`} className={`source-token ${token.kind}`}>{token.value}</span>)}{index < lines.length - 1 ? '\n' : null}</span>)}</pre>
@@ -602,7 +739,7 @@ function InterfaceScalePopover({ scale, onScale, onClose }: { scale: number; onS
   </section>
 }
 
-export function EditorWorkspace({ onOpenAudio, onImportLyrics, onSave, onExport, onRelocateAudio, banner, onNotice }: EditorWorkspaceProps): React.ReactElement {
+export function EditorWorkspace({ onHome, onDropFiles, onOpenAudio, onImportLyrics, onSave, onExport, onRelocateAudio, banner, onNotice }: EditorWorkspaceProps): React.ReactElement {
   const project = useEditorStore((state) => state.project)
   const projectPath = useEditorStore((state) => state.projectPath)
   const audioUrl = useEditorStore((state) => state.audioUrl)
@@ -619,6 +756,7 @@ export function EditorWorkspace({ onOpenAudio, onImportLyrics, onSave, onExport,
   const sortByTime = useEditorStore((state) => state.sortByTime)
   const moveLineTo = useEditorStore((state) => state.moveLineTo)
   const stampSelected = useEditorStore((state) => state.stampSelected)
+  const updateWord = useEditorStore((state) => state.updateWord)
   const undo = useEditorStore((state) => state.undo)
   const redo = useEditorStore((state) => state.redo)
   const [mode, setMode] = useState<'lines' | 'source'>('lines')
@@ -627,6 +765,8 @@ export function EditorWorkspace({ onOpenAudio, onImportLyrics, onSave, onExport,
   const [editorFollow, setEditorFollow] = useState(true)
   const [activeEditorLineOffscreen, setActiveEditorLineOffscreen] = useState(false)
   const [looping, setLooping] = useState(false)
+  const [wordTimingActive, setWordTimingActive] = useState(false)
+  const [selectedWordId, setSelectedWordId] = useState<string | null>(null)
   const [metadataOpen, setMetadataOpen] = useState(false)
   const [scaleOpen, setScaleOpen] = useState(false)
   const [splitPercent, setSplitPercent] = useState(() => storedNumber('lyris.editorSplit', DEFAULT_SPLIT, MIN_SPLIT, MAX_SPLIT))
@@ -634,7 +774,9 @@ export function EditorWorkspace({ onOpenAudio, onImportLyrics, onSave, onExport,
   const [draggedLineId, setDraggedLineId] = useState<string | null>(null)
   const [dropTarget, setDropTarget] = useState<{ lineId: string; position: Exclude<DropPosition, null> } | null>(null)
   const [inlineTimePreview, setInlineTimePreview] = useState<{ lineId: string; timeMs: number } | null>(null)
+  const [dropActive, setDropActive] = useState(false)
   const transportRef = useRef<TransportHandle>(null)
+  const dragDepthRef = useRef(0)
   const editorPaneRef = useRef<HTMLElement>(null)
   const lineListRef = useRef<HTMLDivElement>(null)
   const issues = useMemo(() => validateProject(project), [project])
@@ -650,6 +792,22 @@ export function EditorWorkspace({ onOpenAudio, onImportLyrics, onSave, onExport,
     return new Set(activeStart === null ? [] : project.document.lines.filter((line) => line.startMs === activeStart).map((line) => line.id))
   }, [currentMs, project.document.lines])
   const activeStartMs = useMemo(() => project.document.lines.find((line) => activeIds.has(line.id))?.startMs ?? null, [activeIds, project.document.lines])
+  const wordFollowing = wordTimingActive && editorFollow
+
+  useEffect(() => {
+    if (!wordTimingActive) return
+    setSelectedWordId((current) => selected?.words.some((word) => word.id === current) ? current : selected?.words[0]?.id ?? null)
+  }, [selected?.id, selected?.words, wordTimingActive])
+
+  useEffect(() => {
+    if (!wordFollowing || activeIds.size === 0) return
+    const activeLines = project.document.lines.filter((line) => activeIds.has(line.id) && line.kind === 'lyric')
+    const activeLine = activeLines.find((line) => line.id === selectedLineId) ?? activeLines[0]
+    if (!activeLine) return
+    if (activeLine.id !== selectedLineId) selectLine(activeLine.id)
+    const activeWord = [...activeLine.words].reverse().find((word) => word.startMs <= currentMs) ?? activeLine.words[0] ?? null
+    setSelectedWordId((current) => current === activeWord?.id ? current : activeWord?.id ?? null)
+  }, [activeIds, currentMs, project.document.lines, selectLine, selectedLineId, wordFollowing])
 
   useEffect(() => {
     window.localStorage.setItem('lyris.editorSplit', String(splitPercent))
@@ -675,6 +833,7 @@ export function EditorWorkspace({ onOpenAudio, onImportLyrics, onSave, onExport,
   }, [])
 
   const suspendEditorFollow = useCallback((): void => setEditorFollow(false), [])
+  const toggleEditorFollow = useCallback((): void => setEditorFollow((value) => !value), [])
   const measureActiveEditorLine = useCallback((): void => {
     if (editorFollow || activeStartMs === null || !editorPaneRef.current) {
       setActiveEditorLineOffscreen(false)
@@ -733,27 +892,81 @@ export function EditorWorkspace({ onOpenAudio, onImportLyrics, onSave, onExport,
       if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'z') {
         event.preventDefault(); if (event.shiftKey) redo(); else undo(); return
       }
+      if (event.key === 'Escape' && wordTimingActive && !editing) { event.preventDefault(); setWordTimingActive(false); return }
       if (event.altKey && event.key === 'Enter') { event.preventDefault(); transportRef.current?.stamp(); return }
       if (event.altKey && (event.key === 'ArrowLeft' || event.key === 'ArrowRight')) {
         event.preventDefault()
         const amount = event.shiftKey ? 100 : 10
-        useEditorStore.getState().nudgeSelected(event.key === 'ArrowLeft' ? -amount : amount)
+        const delta = event.key === 'ArrowLeft' ? -amount : amount
+        const activeWord = wordTimingActive ? selected?.words.find((word) => word.id === selectedWordId) : null
+        if (selected && activeWord) {
+          suspendEditorFollow()
+          updateWord(selected.id, activeWord.id, { startMs: Math.max(0, activeWord.startMs + delta) }, 'Nudge word timing')
+        }
+        else useEditorStore.getState().nudgeSelected(delta)
         return
       }
       if (!editing && event.code === 'Space') { event.preventDefault(); transportRef.current?.toggle() }
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
-  }, [redo, undo])
+  }, [redo, selected, selectedWordId, suspendEditorFollow, undo, updateWord, wordTimingActive])
+
+  const selectWord = useCallback((wordId: string): void => {
+    setSelectedWordId(wordId)
+    const word = selected?.words.find((candidate) => candidate.id === wordId)
+    if (word) transportRef.current?.seek(word.startMs)
+  }, [selected])
+
+  const stampTiming = useCallback((timeMs: number): void => {
+    if (!wordTimingActive || !selected) {
+      stampSelected(timeMs)
+      return
+    }
+    const index = selected.words.findIndex((word) => word.id === selectedWordId)
+    if (index < 0) return
+    suspendEditorFollow()
+    const word = selected.words[index]
+    updateWord(selected.id, word.id, { startMs: Math.max(0, Math.round(timeMs)) }, 'Stamp word timing')
+    setSelectedWordId(selected.words[index + 1]?.id ?? word.id)
+  }, [selected, selectedWordId, stampSelected, suspendEditorFollow, updateWord, wordTimingActive])
 
   const metadata = project.document.metadata
   const translationLanguages = [metadata.primaryLanguage, ...metadata.languages].filter((language, index, items) => language && items.findIndex((candidate) => candidate.toLowerCase() === language.toLowerCase()) === index)
   const projectName = metadata.title || project.audio?.fileName || 'Untitled project'
   const issueTotal = issues.filter((issue) => issue.severity !== 'info').length
   const timedTotal = project.document.lines.filter((line) => line.startMs !== null).length
-  return <main className="workspace" data-interface-scale={interfaceScale}>
+  return <main
+    className="workspace"
+    data-interface-scale={interfaceScale}
+    onDragEnter={(event) => {
+      if (!event.dataTransfer.types.includes('Files')) return
+      event.preventDefault()
+      dragDepthRef.current += 1
+      setDropActive(true)
+    }}
+    onDragOver={(event) => {
+      if (!event.dataTransfer.types.includes('Files')) return
+      event.preventDefault()
+      event.dataTransfer.dropEffect = 'copy'
+    }}
+    onDragLeave={(event) => {
+      if (!event.dataTransfer.types.includes('Files')) return
+      event.preventDefault()
+      dragDepthRef.current = Math.max(0, dragDepthRef.current - 1)
+      if (dragDepthRef.current === 0) setDropActive(false)
+    }}
+    onDrop={(event) => {
+      event.preventDefault()
+      dragDepthRef.current = 0
+      setDropActive(false)
+      const files = Array.from(event.dataTransfer.files)
+      if (files.length) onDropFiles(files)
+    }}
+  >
+    {dropActive && <div className="workspace-drop-overlay" role="status" aria-label="Drop files to import"><div><span><AudioIcon /><ImportIcon /></span><strong>Drop to import</strong><small>Audio, TXT, LRC, Enhanced LRC, or XLRC</small></div></div>}
     <header className="project-header">
-      <div className="header-brand"><div className="brand-mark">L</div><strong>LYRIS</strong></div>
+      <button type="button" className="header-brand" onClick={onHome} aria-label="Go to Lyris home" title="Home"><div className="brand-mark">L</div><strong>LYRIS</strong></button>
       <div className="header-divider" />
       <div className="metadata-anchor">
         <button type="button" className="project-summary" onClick={() => setMetadataOpen((value) => !value)} aria-expanded={metadataOpen} aria-label="Edit track details">
@@ -788,18 +1001,14 @@ export function EditorWorkspace({ onOpenAudio, onImportLyrics, onSave, onExport,
         ref={editorPaneRef}
         className="editor-pane"
         data-following-playback={editorFollow}
-        onPointerDownCapture={suspendEditorFollow}
-        onFocusCapture={suspendEditorFollow}
-        onWheelCapture={suspendEditorFollow}
-        onTouchMoveCapture={suspendEditorFollow}
         onScrollCapture={() => requestAnimationFrame(measureActiveEditorLine)}
       >
         <header className="pane-header editor-pane-header">
-          <div className="segmented"><button type="button" className={mode === 'lines' ? 'active' : ''} onClick={() => setMode('lines')}>Lines</button><button type="button" className={mode === 'source' ? 'active' : ''} onClick={() => setMode('source')}>Source</button></div>
+          <div className="segmented"><button type="button" className={mode === 'lines' ? 'active' : ''} onClick={() => setMode('lines')}>Lines</button><button type="button" className={mode === 'source' ? 'active' : ''} onClick={() => { setMode('source'); setWordTimingActive(false) }}>Source</button></div>
           <div className="pane-summary"><span>{project.document.lines.length} lines</span><span>{timedTotal} timed</span>{issueTotal > 0 && <span className="issue-count"><WarningIcon />{issueTotal}</span>}</div>
           <div className="pane-tools"><button type="button" onClick={() => addLine(selectedLineId ?? undefined)}><PlusIcon />Add</button><button type="button" onClick={sortByTime} disabled={!issues.some((issue) => issue.code === 'decreasing-time')}>Sort</button></div>
         </header>
-        {mode === 'source' ? <SourceEditor onNotice={onNotice} activeStartMs={activeStartMs} follow={editorFollow} /> : <div ref={lineListRef} className="line-list">
+        {mode === 'source' ? <SourceEditor onNotice={onNotice} activeStartMs={activeStartMs} follow={editorFollow} onEditorIntent={suspendEditorFollow} /> : <div ref={lineListRef} className="line-list" onPointerDown={(event) => { if (event.target === event.currentTarget) suspendEditorFollow() }} onWheelCapture={suspendEditorFollow} onTouchMoveCapture={suspendEditorFollow}>
           {project.document.lines.length === 0 && <div className="pane-empty"><span>Start the lyric draft</span><p>Import plain or timed lyrics, or add lines and stamp them during playback.</p><button type="button" onClick={() => addLine()}><PlusIcon />Add first line</button></div>}
           {project.document.lines.map((line, index) => <LineRow
             key={line.id}
@@ -811,6 +1020,16 @@ export function EditorWorkspace({ onOpenAudio, onImportLyrics, onSave, onExport,
             languages={translationLanguages}
             dragging={draggedLineId === line.id}
             dropPosition={dropTarget?.lineId === line.id ? dropTarget.position : null}
+            wordTiming={wordTimingActive && line.id === selectedLineId ? {
+              selectedWordId,
+              currentMs,
+              looping,
+              following: editorFollow,
+              onLoop: () => setLooping((value) => !value),
+              onFollow: toggleEditorFollow,
+              onDone: () => setWordTimingActive(false),
+              onSelectWord: selectWord,
+            } : null}
             onDragStart={() => { setDraggedLineId(line.id); setDropTarget(null); selectLine(line.id) }}
             onDragOver={(position) => setDropTarget({ lineId: line.id, position })}
             onDrop={() => {
@@ -826,6 +1045,7 @@ export function EditorWorkspace({ onOpenAudio, onImportLyrics, onSave, onExport,
               setInlineTimePreview(timeMs === null ? null : { lineId, timeMs })
               if (timeMs !== null) transportRef.current?.seek(timeMs)
             }}
+            onEditorIntent={suspendEditorFollow}
             onNotice={onNotice}
           />)}
         </div>}
@@ -838,21 +1058,26 @@ export function EditorWorkspace({ onOpenAudio, onImportLyrics, onSave, onExport,
         ><i />Return to current line</button>}
       </section>
       <PaneResizer value={splitPercent} onChange={setSplitPercent} />
-      <PreviewPane lines={project.document.lines} activeIds={activeIds} currentMs={currentMs} follow={previewFollow} onFollow={setPreviewFollow} onSeek={(time) => transportRef.current?.seek(time)} onSelect={selectLine} />
+      <PreviewPane lines={project.document.lines} activeIds={activeIds} currentMs={currentMs} follow={previewFollow} onFollow={setPreviewFollow} onSeek={(time) => transportRef.current?.seek(time)} onSelect={(lineId) => { suspendEditorFollow(); selectLine(lineId) }} />
     </section>
 
     <section className="timeline-dock">
-      {selected && <TimingStrip line={selected} index={selectedIndex} looping={looping} onLoop={() => setLooping((value) => !value)} onEditorIntent={suspendEditorFollow} onReveal={() => lineListRef.current?.querySelector<HTMLElement>(`[data-line-id="${selected.id}"]`)?.scrollIntoView({ behavior: 'smooth', block: 'center' })} />}
+      {selected && !wordTimingActive && <TimingStrip line={selected} index={selectedIndex} looping={looping} onLoop={() => setLooping((value) => !value)} onEditorIntent={suspendEditorFollow} onStartWordTiming={() => { setWordTimingActive(true); setSelectedWordId(selected.words[0]?.id ?? null) }} onReveal={() => lineListRef.current?.querySelector<HTMLElement>(`[data-line-id="${selected.id}"]`)?.scrollIntoView({ behavior: 'smooth', block: 'center' })} />}
       <AudioTransport
         ref={transportRef}
         sourceUrl={audioUrl}
         lines={project.document.lines}
         selectedLineId={selectedLineId}
+        wordTimingActive={wordTimingActive}
+        selectedWordId={selectedWordId}
         loop={looping}
         onSelectLine={selectLine}
         onTime={setCurrentMs}
-        onStamp={stampSelected}
+        onStamp={stampTiming}
         onMoveMarker={(lineId, startMs) => updateLine(lineId, { startMs }, 'Move timing marker')}
+        onSelectWord={selectWord}
+        onMoveWord={(lineId, wordId, startMs) => updateWord(lineId, wordId, { startMs }, 'Move word marker')}
+        onTimingIntent={suspendEditorFollow}
         previewMarker={inlineTimePreview}
       />
     </section>

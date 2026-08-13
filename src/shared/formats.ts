@@ -65,7 +65,7 @@ function lineFromXLRC(line: XLRCLine): LyricLine {
       id: createId('word'),
       text: word.text,
       startMs: word.timestamp,
-      endMs: words[index + 1]?.timestamp ?? null,
+      endMs: words[index + 1]?.timestamp !== undefined && words[index + 1].timestamp > word.timestamp ? words[index + 1].timestamp : null,
       furigana: word.furigana.map(({ start, end, base, reading }) => ({ start, end, base, reading })),
       provenance: { kind: 'import', createdAt: new Date().toISOString() },
     })),

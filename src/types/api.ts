@@ -13,6 +13,9 @@ import type {
 
 export interface LyrisApi {
   platform: NodeJS.Platform
+  files: {
+    pathForFile: (file: File) => string
+  }
   project: {
     open: () => Promise<OpenProjectResult | null>
     openPath: (path: string) => Promise<OpenProjectResult>
@@ -27,6 +30,7 @@ export interface LyrisApi {
   }
   audio: {
     select: (projectPath: string | null) => Promise<AudioSelection | null>
+    openPath: (path: string, projectPath: string | null) => Promise<AudioSelection>
     relocate: (reference: AudioReference, projectPath: string | null) => Promise<AudioSelection | null>
   }
   lyrics: {

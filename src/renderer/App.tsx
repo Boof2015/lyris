@@ -16,6 +16,13 @@ interface LyricsSuggestion {
   embeddedLyrics: string | null
 }
 
+const audioExtensions = new Set(['mp3', 'flac', 'wav', 'm4a', 'aac', 'ogg', 'opus', 'aiff', 'aif'])
+const lyricExtensions = new Set(['txt', 'lrc', 'elrc', 'xlrc'])
+
+function fileExtension(name: string): string {
+  return name.toLowerCase().split('.').at(-1) ?? ''
+}
+
 function recentLocation(path: string): string {
   const parts = path.replace(/\\/gu, '/').split('/').filter(Boolean)
   const folder = parts.at(-2)
@@ -163,6 +170,38 @@ export default function App(): React.ReactElement {
     catch (error) { notify(error instanceof Error ? error.message : 'Could not open audio.', 'warning') }
   }, [consumeAudioSelection, notify, projectPath])
 
+  const importDroppedFiles = useCallback(async (files: File[]) => {
+    const resolved = files.map((file) => ({ file, extension: fileExtension(file.name), path: window.lyris.files.pathForFile(file) }))
+    const audioFiles = resolved.filter((entry) => audioExtensions.has(entry.extension) && entry.path)
+    const lyricFiles = resolved.filter((entry) => lyricExtensions.has(entry.extension) && entry.path)
+    const unsupported = resolved.length - audioFiles.length - lyricFiles.length
+    if (!audioFiles.length && !lyricFiles.length) {
+      notify(files.some((file) => fileExtension(file.name) === 'lyris')
+        ? 'Open .lyris projects from Home or File → Open Project.'
+        : 'Drop a supported audio file or TXT, LRC, Enhanced LRC, or XLRC lyrics.', 'warning')
+      return
+    }
+    try {
+      const messages: string[] = []
+      let warning = unsupported > 0 || audioFiles.length > 1 || lyricFiles.length > 1
+      if (audioFiles[0]) {
+        consumeAudioSelection(await window.lyris.audio.openPath(audioFiles[0].path, projectPath))
+        messages.push(`Attached ${audioFiles[0].file.name}.`)
+      }
+      if (lyricFiles[0]) {
+        const imported = await window.lyris.lyrics.readPath(lyricFiles[0].path)
+        const warnings = importText(imported.text)
+        warning ||= warnings.length > 0
+        messages.push(`Imported ${imported.fileName}${warnings.length ? ` with ${warnings.length} warning${warnings.length === 1 ? '' : 's'}` : ''}.`)
+      }
+      const ignored = unsupported + Math.max(0, audioFiles.length - 1) + Math.max(0, lyricFiles.length - 1)
+      if (ignored) messages.push(`Ignored ${ignored} additional file${ignored === 1 ? '' : 's'}.`)
+      notify(messages.join(' '), warning ? 'warning' : 'success')
+    } catch (error) {
+      notify(error instanceof Error ? error.message : 'Could not import the dropped files.', 'warning')
+    }
+  }, [consumeAudioSelection, importText, notify, projectPath])
+
   const importLyricsFile = useCallback(async () => {
     try {
       const imported = await window.lyris.lyrics.import()
@@ -184,6 +223,24 @@ export default function App(): React.ReactElement {
       notify('Project saved.', 'success')
     } catch (error) { notify(error instanceof Error ? error.message : 'Could not save project.', 'warning') }
   }, [markSaved, notify, refreshRecent])
+
+  const goHome = useCallback(async () => {
+    const state = useEditorStore.getState()
+    try {
+      if (state.dirty && state.projectPath) {
+        await window.lyris.project.autosave({ project: state.project, path: state.projectPath, sourcePath: state.projectPath })
+      } else if (state.dirty) {
+        await window.lyris.project.writeRecovery(state.project)
+        setRecovery(state.project)
+      }
+      setSuggestion(null)
+      setExportOpen(false)
+      newProject()
+      refreshRecent()
+    } catch (error) {
+      notify(error instanceof Error ? error.message : 'Could not preserve the current project before returning home.', 'warning')
+    }
+  }, [newProject, notify, refreshRecent])
 
   useEffect(() => {
     window.lyris.window.setDocumentEdited(dirty)
@@ -245,6 +302,8 @@ export default function App(): React.ReactElement {
       onRecover={() => { if (recovery) { restoreProject(recovery); setRecovery(null) } }}
       onDiscardRecovery={() => { void window.lyris.project.clearRecovery(); setRecovery(null) }}
     /> : <EditorWorkspace
+      onHome={() => void goHome()}
+      onDropFiles={(files) => void importDroppedFiles(files)}
       onOpenAudio={() => void openAudio()}
       onImportLyrics={() => void importLyricsFile()}
       onSave={(saveAs) => void save(saveAs)}

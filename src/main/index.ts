@@ -3,7 +3,7 @@ import type { MenuItemConstructorOptions } from 'electron'
 import { readFile, stat, writeFile } from 'node:fs/promises'
 import { createReadStream, existsSync } from 'node:fs'
 import { Readable } from 'node:stream'
-import { basename, resolve } from 'node:path'
+import { basename, extname, resolve } from 'node:path'
 import type { ExportRequest, SaveProjectRequest } from '../types/project'
 import { AudioRegistry, mimeFor } from './audioFiles'
 import { ProjectStorage } from './projectStorage'
@@ -17,6 +17,7 @@ let mainWindow: BrowserWindow | null = null
 const audioRegistry = new AudioRegistry()
 let projectStorage: ProjectStorage
 let pendingProjectPath = process.argv.find((argument) => argument.toLowerCase().endsWith('.lyris') && existsSync(argument)) ?? null
+const audioExtensions = new Set(['mp3', 'flac', 'wav', 'm4a', 'aac', 'ogg', 'opus', 'aiff', 'aif'])
 
 interface ByteRange {
   start: number
@@ -129,6 +130,12 @@ function registerIpc(): void {
       filters: [{ name: 'Audio', extensions: ['mp3', 'flac', 'wav', 'm4a', 'aac', 'ogg', 'opus', 'aiff', 'aif'] }],
     })
     return result.canceled || !result.filePaths[0] ? null : audioRegistry.select(result.filePaths[0], projectPath)
+  })
+  ipcMain.handle('audio:open-path', (_event, path: string, projectPath: string | null) => {
+    const absolute = resolve(path)
+    const extension = extname(absolute).slice(1).toLowerCase()
+    if (!audioExtensions.has(extension)) throw new Error('That dropped file is not a supported audio format.')
+    return audioRegistry.select(absolute, projectPath)
   })
   ipcMain.handle('audio:relocate', async (_event, reference, projectPath: string | null) => {
     const result = await dialog.showOpenDialog(mainWindow!, { properties: ['openFile'] })

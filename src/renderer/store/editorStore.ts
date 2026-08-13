@@ -4,6 +4,7 @@ import type {
   DocumentOperation,
   LyrisProject,
   LyricLine,
+  LyricWord,
   LyricsDocument,
   OpenProjectResult,
   TrackMetadata,
@@ -53,6 +54,8 @@ interface EditorState {
   sortByTime: () => void
   stampSelected: (timeMs: number) => void
   nudgeSelected: (deltaMs: number) => void
+  setWordSegments: (lineId: string, segments: string[]) => void
+  updateWord: (lineId: string, wordId: string, patch: Partial<Omit<LyricWord, 'id'>>, label?: string) => void
   importText: (text: string) => string[]
   sourceText: () => string
   applySource: (source: string) => SourceApplyResult
@@ -147,6 +150,16 @@ export const useEditorStore = create<EditorState>((set, get) => ({
     if (patch.text !== undefined && patch.text !== line.text && (line.words.length > 0 || line.furigana.length > 0)) {
       invalidated = true
       effectivePatch = { ...patch, words: [], furigana: [], confidence: undefined, reviewState: 'needs-review' }
+    } else if (patch.startMs !== undefined && patch.startMs !== null && line.startMs !== null && patch.startMs !== line.startMs && patch.words === undefined && line.words.length > 0) {
+      const delta = patch.startMs - line.startMs
+      effectivePatch = {
+        ...patch,
+        words: line.words.map((word) => ({
+          ...word,
+          startMs: Math.max(0, word.startMs + delta),
+          endMs: word.endMs === null ? null : Math.max(0, word.endMs + delta),
+        })),
+      }
     }
     const changed = Object.entries(effectivePatch).some(([key, value]) => !Object.is(line[key as keyof LyricLine], value))
     if (!changed) return invalidated
@@ -236,6 +249,34 @@ export const useEditorStore = create<EditorState>((set, get) => ({
     const line = state.project.document.lines.find((candidate) => candidate.id === state.selectedLineId)
     if (!line) return
     state.updateLine(line.id, { startMs: Math.max(0, (line.startMs ?? 0) + deltaMs) }, 'Nudge line timing')
+  },
+
+  setWordSegments: (lineId, segments) => {
+    const state = get()
+    const line = state.project.document.lines.find((candidate) => candidate.id === lineId)
+    if (!line || line.startMs === null || line.words.length > 0 || segments.length === 0 || segments.some((segment) => segment.length === 0)) return
+    const words: LyricWord[] = segments.map((text) => ({
+      id: createId('word'),
+      text,
+      startMs: line.startMs ?? 0,
+      endMs: null,
+      furigana: [],
+      provenance: { kind: 'manual', createdAt: new Date().toISOString() },
+    }))
+    state.updateLine(lineId, { words, reviewState: 'needs-review' }, 'Create word segments')
+  },
+
+  updateWord: (lineId, wordId, patch, label = 'Edit word timing') => {
+    const state = get()
+    const line = state.project.document.lines.find((candidate) => candidate.id === lineId)
+    const wordIndex = line?.words.findIndex((word) => word.id === wordId) ?? -1
+    if (!line || wordIndex < 0) return
+    const words = line.words.map((word, index) => index === wordIndex ? { ...word, ...patch, id: word.id } : { ...word })
+    for (let index = 0; index < words.length; index += 1) {
+      const nextStart = words[index + 1]?.startMs
+      words[index].endMs = nextStart !== undefined && nextStart > words[index].startMs ? nextStart : index === words.length - 1 ? line.endMs : null
+    }
+    state.updateLine(lineId, { words, reviewState: 'needs-review' }, label)
   },
 
   importText: (text) => {
